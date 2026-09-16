@@ -12,6 +12,8 @@ v1 只产 clause 卡；表格整卡、图描述并入、refs 正则抽取均为 
 from dataclasses import dataclass, field
 from typing import Literal
 
+import re
+
 from rag.parsing import StandardDoc
 
 
