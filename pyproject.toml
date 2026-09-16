@@ -1,0 +1,49 @@
+[project]
+name = "spec-agent"
+version = "0.1.0"
+description = "工程标准符合性审查多智能体系统：带证据链的审查报告，证据不足分级拒答"
+requires-python = ">=3.11,<3.12"
+
+# 依赖纪律（守则）：每引入一个依赖必须能说出不可替代的理由，随模块推进逐个加入
+dependencies = [
+    # L0 接口层：FastAPI 原生支持 SSE 流式输出审查过程，这是选它的核心理由
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    # 结构化输出：报告 Schema / 证据三元组全靠 Pydantic 约束，全项目数据模型事实标准
+    "pydantic>=2.8",
+    "pydantic-settings>=2.4",
+    # PostgreSQL 驱动：psycopg3 是 PG 官方推荐的现代驱动，原生支持服务端游标与二进制协议
+    "psycopg[binary]>=3.2",
+    # pgvector 的 Python 类型适配（vector(1024) <-> numpy/list），配合 psycopg 使用
+    "pgvector>=0.3",
+    # PDF 解析：PyMuPDF 速度与版面结构还原度最好，纯本地无 API 成本
+    "pymupdf>=1.24",
+]
+
+[project.optional-dependencies]
+# 用 optional-dependencies 而不是 PEP 735 dependency-groups：后者要 pip>=25.1，
+# 老 pip 会静默忽略导致"装了 dev 却没 pytest"的假成功
+dev = [
+    "pytest>=8.0",
+    # FastAPI TestClient 的底层依赖
+    "httpx>=0.27",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+# backend/ 是包根：api / agents / rag / memory / reliability / safety 顶层可 import
+[tool.setuptools]
+package-dir = { "" = "backend" }
+packages = ["api", "agents", "rag", "memory", "reliability", "safety"]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+# 让 backend/ 下的包可以直接 import（rag / agents / api ...）
+pythonpath = ["backend"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
