@@ -18,6 +18,13 @@ dependencies = [
     "pgvector>=0.3",
     # PDF 解析：PyMuPDF 速度与版面结构还原度最好，纯本地无 API 成本
     "pymupdf>=1.24",
+    # 本地 embedding/rerank 标准加载层：BGE-M3 与 bge-reranker 官方支持，
+    # 免自管 tokenizer/pooling；换模型只改模型名
+    "sentence-transformers>=3.0",
+    # 中文分词：PG 原生全文检索无中文分词器（整句变一个词），
+    # BM25 通路必须先分词；zhparser/pg_jieba 需编译扩展，Windows 容器装不了，
+    # jieba 纯 Python 零编译是该约束下的唯一选择
+    "jieba>=0.42",
 ]
 
 [project.optional-dependencies]
