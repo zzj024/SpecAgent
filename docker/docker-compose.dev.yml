@@ -1,0 +1,26 @@
+# 开发环境编排（M3 会扩展为全栈一键启动版）
+# 用法: docker compose -f docker/docker-compose.dev.yml up -d
+#
+# 为什么镜像选 pgvector/pgvector 而不是官方 postgres + 手动装扩展:
+# pgvector 编译安装需要 MSVC 构建链，Windows 原生装扩展成本高;
+# 官方镜像自带扩展，版本矩阵与 PostgreSQL 大版本对齐，升级只改 tag。
+services:
+  pg:
+    image: pgvector/pgvector:pg16
+    container_name: spec-agent-pg
+    environment:
+      POSTGRES_USER: specagent
+      POSTGRES_PASSWORD: specagent   # 仅本地开发，生产凭据走 .env
+      POSTGRES_DB: specagent
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U specagent -d specagent"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
