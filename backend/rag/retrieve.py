@@ -13,6 +13,8 @@ BM25 路两端都是 jieba 分词 + 'simple' 配置。分词器/配置两端不�
 import numpy as np
 import psycopg
 
+from pgvector.psycopg import register_vector  # noqa: E402
+
 from rag.store import DSN, embed_texts, load_model, tokenize
 
 
