@@ -28,11 +28,11 @@ def test_k_truncation_and_missing_path():
 
 
 def test_rrf_score_values():
-    """手算对账：第1名+第2名 = 1/61 + 1/62 ≈ 0.03252（教材同款数字）。"""
+    """手算对账：两路都是第 1 名 → 2×(1/61)≈0.03279（夹具与断言必须一致）。"""
     vec = [{"chunk_id": "A:1:0"}]
     kw = [{"chunk_id": "A:1:0", "content": "a"}]
     merged = rrf_merge([vec, kw], k=1)
-    assert abs(merged[0]["rrf"] - (1 / 61 + 1 / 62)) < 1e-9
+    assert abs(merged[0]["rrf"] - 2 * (1 / 61)) < 1e-9
 
 
 @pytest.mark.integration
