@@ -25,6 +25,9 @@ dependencies = [
     # BM25 通路必须先分词；zhparser/pg_jieba 需编译扩展，Windows 容器装不了，
     # jieba 纯 Python 零编译是该约束下的唯一选择
     "jieba>=0.42",
+    # 编排：显式状态机（State/Node/条件边全显式可审计），比 Chain 的隐式链路
+    # 可归因；checkpointer 原生支持断点续跑（M3 评测六的落点），选型见 02-技术方案
+    "langgraph>=1.2",
 ]
 
 [project.optional-dependencies]
