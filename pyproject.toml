@@ -49,7 +49,11 @@ packages = ["api", "agents", "rag", "memory", "reliability", "safety"]
 testpaths = ["backend/tests"]
 # 让 backend/ 下的包可以直接 import（rag / agents / api ...）
 pythonpath = ["backend"]
-addopts = "-q"
+# 默认只跑快速单测；集成测（需数据库+本地模型）用 pytest -m integration 单独跑
+addopts = "-q -m 'not integration'"
+markers = [
+    "integration: 需要数据库与本地模型的集成测试（-m integration 运行）",
+]
 
 [tool.ruff]
 line-length = 100
