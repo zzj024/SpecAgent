@@ -10,12 +10,23 @@
 BM25 路两端都是 jieba 分词 + 'simple' 配置。分词器/配置两端不一致，
 词就对不上（入库切"上限值"、查询切"上限 值"→ 倒排索引查空）。
 """
+import re
+
 import numpy as np
 import psycopg
 
 from pgvector.psycopg import register_vector  # noqa: E402
 
 from rag.store import DSN, embed_texts, load_model, tokenize
+
+_TSQUERY_SAFE = re.compile(r"^[\w\u4e00-\u9fff]+$")  # 字母/数字/下划线/中文，tsquery 语法外一律剔除
+
+
+def _to_tsquery_text(query: str) -> str:
+    """查询词 → 合法 tsquery 串。剔除 ':' '&' 等保留符号（如 '1:3' 的冒号
+    会让 to_tsquery 直接语法报错），全被剔除时返回空串由调用方短路。"""
+    words = [w for w in tokenize(query).split() if _TSQUERY_SAFE.match(w)]
+    return " | ".join(words)
 
 
 def vector_search(cur, model, query: str, k: int = 20) -> list[dict]:
@@ -38,7 +49,9 @@ def keyword_search(cur, query: str, k: int = 20) -> list[dict]:
     OR 不用 AND：AND 要求所有词都在卡里，口语查询极易 0 结果；
     OR 宽进保召回，ts_rank 按命中质量排名。倒排索引（GIN）直接给出
     候选名单——没命中的卡连比都不比。"""
-    tsquery = " | ".join(tokenize(query).split())
+    tsquery = _to_tsquery_text(query)
+    if not tsquery:
+        return []
     rows = cur.execute(
         """SELECT chunk_id, clause_no, content,
                   ts_rank(tsv, q) AS score
