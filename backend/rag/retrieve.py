@@ -47,3 +47,24 @@ def keyword_search(cur, query: str, k: int = 20) -> list[dict]:
     ).fetchall()
     return [dict(chunk_id=r[0], clause_no=r[1], content=r[2], score=float(r[3]))
             for r in rows]
+
+
+# ---- 第 2 段：RRF 融合（2026-09-17 用户走读确认后写入）----
+
+
+def rrf_merge(rankings: list[list[dict]], k: int = 5, smooth: int = 60) -> list[dict]:
+    """多路名次倒数求和：贡献 = 1/(smooth+名次)，同卡多路相加。
+
+    两路写同一本账：外层循环轮到第几路，就按该路名次往 scores 打钱；
+    同一 chunk_id 被几路打到就自动加几笔（get(id,0) + 贡献）。
+    纯函数不碰库，行为由单测钉死。"""
+    scores: dict[str, float] = {}
+    seen: dict[str, dict] = {}
+    for ranking in rankings:
+        for rank, hit in enumerate(ranking, start=1):     # 名次从 1 数起
+            scores[hit["chunk_id"]] = (
+                scores.get(hit["chunk_id"], 0.0) + 1.0 / (smooth + rank)
+            )
+            seen.setdefault(hit["chunk_id"], hit)          # 记住卡片本体，输出还原
+    ordered = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)[:k]
+    return [{**seen[cid], "rrf": score} for cid, score in ordered]
