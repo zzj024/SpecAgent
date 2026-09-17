@@ -93,3 +93,30 @@ def hybrid_search(
             vec = vector_search(cur, model, query, candidate_k)
             kw = keyword_search(cur, query, candidate_k)
     return rrf_merge([vec, kw], k=k)
+
+
+# ---- 第 4 段：rerank 接入（2026-09-17 用户走读确认后写入）----
+from sentence_transformers import CrossEncoder  # noqa: E402
+
+_RERANKER = None
+
+
+def get_reranker() -> CrossEncoder:
+    """懒加载：第一次调用才载入 2.2GB 权重，之后全局复用同一份。"""
+    global _RERANKER
+    if _RERANKER is None:
+        _RERANKER = CrossEncoder("BAAI/bge-reranker-v2-m3")
+    return _RERANKER
+
+
+def rerank(query: str, candidates: list[dict], k: int = 5) -> list[dict]:
+    """面试：[问题, 卡片正文] 成对批量送入 cross-encoder，按相关分重排。
+
+    predict 一次收全部候选（批处理）；分数存 rerank 字段仅供观察；
+    cross-encoder 输入只有文本对，看不到海选的 rrf——RRF 的权力
+    止于决定谁入围。独立成函数是为评测一三档对比留单变量归因。"""
+    pairs = [(query, c["content"]) for c in candidates]
+    scores = get_reranker().predict(pairs)
+    for c, s in zip(candidates, scores):
+        c["rerank"] = float(s)
+    return sorted(candidates, key=lambda c: c["rerank"], reverse=True)[:k]
