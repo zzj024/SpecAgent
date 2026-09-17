@@ -68,3 +68,26 @@ def rrf_merge(rankings: list[list[dict]], k: int = 5, smooth: int = 60) -> list[
             seen.setdefault(hit["chunk_id"], hit)          # 记住卡片本体，输出还原
     ordered = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)[:k]
     return [{**seen[cid], "rrf": score} for cid, score in ordered]
+
+
+# ---- 第 3 段：hybrid_search 总装（2026-09-17 用户走读确认后写入）----
+
+
+def hybrid_search(
+    query: str,
+    k: int = 5,
+    candidate_k: int = 20,
+    model=None,
+) -> list[dict]:
+    """混合检索总装：双通路海选 → RRF 融合 → 切前 k。
+
+    candidate_k=20：宽入围——单路名次靠后但另一路认可的卡要有进场机会；
+    每路只取 1 张则融合名存实亡（宽进严出是漏斗的第一原则）。
+    model 可外部传入复用：2GB 权重一个进程只读一次。"""
+    model = model or load_model()
+    with psycopg.connect(DSN) as conn:
+        register_vector(conn)
+        with conn.cursor() as cur:
+            vec = vector_search(cur, model, query, candidate_k)
+            kw = keyword_search(cur, query, candidate_k)
+    return rrf_merge([vec, kw], k=k)
