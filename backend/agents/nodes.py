@@ -31,6 +31,7 @@ from core.schemas import CheckItem, Evidence, Finding
 from memory.long_term import MemoryStore
 from memory.working import WorkingMemory
 from rag.retrieve import hybrid_search, load_model, rerank
+from rag.store import tokenize
 from reliability.breaker import CircuitBreaker
 from safety.evidence_gate import verify_evidence
 
@@ -182,6 +183,19 @@ def _llm_judge(item: CheckItem, hits: list[dict], wm: WorkingMemory,
     )
 
 
+def _weak_related(item_text: str, hits: list[dict]) -> bool:
+    """A/B 拒答的边界判据：top1 候选与检查项有无 ≥2 字词的词汇交集。
+
+    分数低于拒答线时还要分两种死法：
+      词汇零交集（"防火涂料耐火极限" vs 粗糙度条文）→ A：真没覆盖；
+      词汇有交集（"公差等级的定义" vs 3.3 术语条款）→ B：擦边相关，
+      但证据不足以支撑结论。同一分数线，落在带内哪一侧靠词面定级。"""
+    if not hits:
+        return False
+    toks = [t for t in tokenize(item_text).split() if len(t) >= 2]
+    return any(t in hits[0]["content"] for t in toks)
+
+
 def reviewer_node(state: ReviewState) -> dict:
     """审查 Agent：Plan-and-Execute——逐项执行"检索结果→判定"计划。
 
@@ -204,14 +218,18 @@ def reviewer_node(state: ReviewState) -> dict:
 
     for it in state.get("items", []):
         hits = by_seq.get(it.seq, [])
-        # ---- A 级拒答：top 候选相关分低于阈值 = 标准库未覆盖该项 ----
+        # ---- A/B 级拒答：top 候选低于拒答线后按词面交集定级（见 _weak_related）----
         top = hits[0]["score"] if hits else 0.0
         if not hits or top < REFUSE_A_SCORE:
+            related = _weak_related(it.text, hits)
             out.append(Finding(
-                item=it, verdict="refusal_A", confidence=1.0 - top,
-                rationale=f"检索 top 相关分 {top}（阈值 {REFUSE_A_SCORE}），标准库未覆盖该项。",
+                item=it, verdict="refusal_B" if related else "refusal_A",
+                confidence=1.0 - top,
+                rationale=(f"检索 top 相关分 {top}（阈值 {REFUSE_A_SCORE}），"
+                           + ("有擦边相关条文但证据不足以判定。" if related
+                              else "标准库未覆盖该项。")),
             ))
-            wm.add(it.seq, f"{it.text}→A级拒答", "refusal_A")
+            wm.add(it.seq, f"{it.text}→{out[-1].verdict}", out[-1].verdict)
             continue
 
         hints = mem.search(domain, it.attribute, limit=2) if use_memory else []

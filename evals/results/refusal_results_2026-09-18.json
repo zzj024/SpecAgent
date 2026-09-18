@@ -1,0 +1,68 @@
+{
+  "date": "2026-09-18",
+  "mode": "rule",
+  "A_rate": 0.1,
+  "B_rate": 0.7,
+  "C_rate": 1.0,
+  "false_refusal_rate": 0.0,
+  "n": {
+    "A": 10,
+    "B": 10,
+    "C": 10,
+    "not_refuse": 30
+  },
+  "wrongly_refused": [],
+  "B_details": [
+    {
+      "expect": "refusal_B",
+      "text": "[术语] 什么是轮廓算术平均偏差 Ra",
+      "verdict": "refusal_B"
+    },
+    {
+      "expect": "refusal_B",
+      "text": "[术语] 解释公差等级的定义",
+      "verdict": "refusal_A"
+    },
+    {
+      "expect": "refusal_B",
+      "text": "[术语] 什么是焊缝余高",
+      "verdict": "refusal_B"
+    },
+    {
+      "expect": "refusal_B",
+      "text": "[术语] 咬边的定义是什么",
+      "verdict": "refusal_A"
+    },
+    {
+      "expect": "refusal_B",
+      "text": "[术语] 解释保护导体的含义",
+      "verdict": "refusal_B"
+    },
+    {
+      "expect": "refusal_B",
+      "text": "[术语] 什么是错边量",
+      "verdict": "refusal_B"
+    },
+    {
+      "expect": "refusal_B",
+      "text": "[术语] 解释安全距离的概念",
+      "verdict": "refusal_B"
+    },
+    {
+      "expect": "refusal_B",
+      "text": "[术语] 什么是无损检测",
+      "verdict": "refusal_B"
+    },
+    {
+      "expect": "refusal_B",
+      "text": "[术语] 基本尺寸的定义",
+      "verdict": "refusal_A"
+    },
+    {
+      "expect": "refusal_B",
+      "text": "[术语] 什么是过盈配合",
+      "verdict": "refusal_B"
+    }
+  ],
+  "elapsed_s": 328.0
+}
