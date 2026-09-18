@@ -7,6 +7,8 @@
 import jieba
 from sentence_transformers import SentenceTransformer
 
+from core.config import DSN  # noqa: F401 —— 再导出：老调用方 rag.store.DSN 保持可用
+
 MODEL_NAME = "BAAI/bge-m3"
 
 
@@ -42,8 +44,6 @@ from pgvector.psycopg import register_vector  # noqa: E402
 
 from rag.chunking import chunk_standard  # noqa: E402
 from rag.parsing import parse_markdown  # noqa: E402
-
-DSN = "postgresql://specagent:specagent@localhost:5432/specagent"
 
 
 def ingest(md_paths: list[str], dsn: str = DSN) -> int:

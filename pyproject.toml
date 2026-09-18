@@ -38,15 +38,18 @@ dev = [
     # FastAPI TestClient 的底层依赖
     "httpx>=0.27",
 ]
+# MCP server 用官方 SDK（stdio 传输，Claude Code 接入演示）；懒导入——
+# 不装 mcp 不影响主流水线与 pytest
+mcp = ["mcp>=1.2"]
 
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
-# backend/ 是包根：api / agents / rag / memory / reliability / safety 顶层可 import
+# backend/ 是包根：api / agents / core / rag / memory / reliability / safety 顶层可 import
 [tool.setuptools]
 package-dir = { "" = "backend" }
-packages = ["api", "agents", "rag", "memory", "reliability", "safety"]
+packages = ["api", "agents", "core", "rag", "memory", "reliability", "safety"]
 
 [tool.pytest.ini_options]
 testpaths = ["backend/tests"]
