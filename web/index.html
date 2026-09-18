@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpecAgent · 标准符合性审查</title>
+<script src="https://unpkg.com/vue@3.4.38/dist/vue.global.prod.js"></script>
+<style>
+  :root { --bg:#0f1117; --panel:#171a23; --line:#262b38; --ink:#e8eaf0; --dim:#8b93a7;
+          --blue:#4f8ef7; --green:#3ecf8e; --red:#ff6b6b; --amber:#f5b455; --purple:#a78bfa; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink);
+         font-family:"Segoe UI",-apple-system,"Microsoft YaHei",sans-serif; padding:32px; }
+  .wrap { max-width:1080px; margin:0 auto; }
+  h1 { font-size:22px; margin-bottom:4px; }
+  .sub { color:var(--dim); font-size:13px; margin-bottom:24px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .card h3 { font-size:14px; color:var(--dim); margin-bottom:10px; font-weight:600; }
+  textarea { width:100%; height:280px; background:#0c0e14; color:var(--ink);
+             border:1px solid var(--line); border-radius:8px; padding:12px;
+             font:12px/1.6 Consolas,monospace; resize:vertical; }
+  .row { display:flex; gap:10px; margin-top:10px; align-items:center; }
+  button { background:var(--blue); color:#fff; border:0; border-radius:8px;
+           padding:10px 22px; font-size:14px; cursor:pointer; }
+  button:disabled { background:#2a3247; color:var(--dim); cursor:not-allowed; }
+  button.ghost { background:transparent; border:1px solid var(--line); color:var(--dim); }
+  .nodes { display:flex; gap:8px; margin:14px 0; flex-wrap:wrap; }
+  .node { padding:6px 14px; border-radius:20px; font-size:13px;
+          border:1px solid var(--line); color:var(--dim); }
+  .node.on { border-color:var(--green); color:var(--green); }
+  .node.now { border-color:var(--blue); color:var(--blue); animation:pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity:.4; } }
+  .log { background:#0c0e14; border-radius:8px; padding:10px; height:120px; overflow-y:auto;
+         font:11px/1.7 Consolas,monospace; color:var(--dim); }
+  .stats { display:flex; gap:10px; flex-wrap:wrap; margin:12px 0; }
+  .stat { background:#0c0e14; border-radius:8px; padding:8px 14px; text-align:center; }
+  .stat b { display:block; font-size:20px; }
+  .stat span { font-size:11px; color:var(--dim); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--dim); font-weight:600; font-size:12px; }
+  .badge { padding:2px 10px; border-radius:10px; font-size:12px; white-space:nowrap; }
+  .b-nc { background:rgba(255,107,107,.15); color:var(--red); }
+  .b-c  { background:rgba(62,207,142,.15); color:var(--green); }
+  .b-r  { background:rgba(245,180,85,.15); color:var(--amber); }
+  .b-d  { background:rgba(139,147,167,.15); color:var(--dim); }
+  .ev { color:var(--dim); font-size:12px; line-height:1.6; }
+  .ev b { color:var(--purple); font-weight:600; }
+  .ev i { color:var(--ink); font-style:normal; border-left:2px solid var(--purple);
+          padding-left:8px; display:block; margin-top:4px; }
+  .why { color:var(--dim); font-size:12px; margin-top:4px; }
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <h1>SpecAgent · 工程标准符合性审查</h1>
+  <div class="sub">五 Agent 流水线（路由 → 检索 → 审查 → 校验 → 报告）· 证据链强制 · 证据不足分级拒答</div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>待审文档（[标签] 行 = 检查项）</h3>
+      <textarea v-model="doc" :disabled="running"></textarea>
+      <div class="row">
+        <button @click="submit" :disabled="running">{{ running ? '审查中…' : '开始审查' }}</button>
+        <button class="ghost" @click="doc = SAMPLE" :disabled="running">填入示例</button>
+        <span v-if="elapsed" style="color:var(--dim);font-size:12px">{{ elapsed }}</span>
+      </div>
+      <div class="nodes">
+        <div v-for="n in NODES" :key="n" class="node"
+             :class="{ on: doneNodes.includes(n), now: running && currentNode === n }">{{ n }}</div>
+      </div>
+      <div class="log" ref="log"><div v-for="(l, i) in logs" :key="i">{{ l }}</div></div>
+    </div>
+
+    <div class="card">
+      <h3>审查报告</h3>
+      <template v-if="report">
+        <div class="stats">
+          <div class="stat"><b>{{ report.stats.total }}</b><span>检查项</span></div>
+          <div class="stat"><b style="color:var(--green)">{{ report.stats.compliant || 0 }}</b><span>符合</span></div>
+          <div class="stat"><b style="color:var(--red)">{{ report.stats.non_compliant || 0 }}</b><span>不符合</span></div>
+          <div class="stat"><b style="color:var(--amber)">{{ (report.stats.refusal_A || 0) + (report.stats.refusal_B || 0) + (report.stats.refusal_C || 0) }}</b><span>分级拒答</span></div>
+          <div class="stat"><b>{{ report.mode }}</b><span>判定轨</span></div>
+        </div>
+        <table>
+          <tr><th style="width:90px">结论</th><th>检查项 · 证据链 · 理由</th></tr>
+          <tr v-for="f in report.findings" :key="f.item_seq">
+            <td><span class="badge" :class="badge(f.verdict)">{{ label(f.verdict) }}</span></td>
+            <td>
+              {{ f.item_text }}
+              <div class="ev" v-if="f.evidence && f.evidence.clause_no">
+                <b>依据 {{ f.evidence.standard_id }} §{{ f.evidence.clause_no }}</b>
+                （相关分 {{ f.evidence.score }}，置信度 {{ f.confidence }}，校验 {{ f.verify }}）
+                <i>“{{ f.evidence.quote }}”</i>
+              </div>
+              <div class="why">{{ f.rationale }}</div>
+            </td>
+          </tr>
+        </table>
+      </template>
+      <div v-else style="color:var(--dim);font-size:13px;padding:24px 0;text-align:center">
+        左侧提交文档后，这里输出带证据链的结构化报告
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const { createApp, ref } = Vue;
+createApp({
+  setup() {
+    const NODES = ['router', 'retriever', 'reviewer', 'verifier', 'writer'];
+    const SAMPLE = `# 支架焊接件 + 电气柜 技术要求（示例）
+
+[粗糙度] 阶梯轴配合表面粗糙度 Ra 3.2
+[粗糙度] 端面非加工表面粗糙度 Ra 12.5
+[比例] 主视图绘图比例 1:2
+[余高] 对接焊缝余高 4 mm
+[接地] 电气柜保护接地电阻 5 Ω
+[涂装] 防火涂料耐火极限 2.0 h（语料未覆盖项）`;
+    const doc = ref(SAMPLE), running = ref(false), report = ref(null);
+    const logs = ref([]), doneNodes = ref([]), currentNode = ref('');
+    const elapsed = ref(''), log = ref(null);
+
+    const label = v => ({ compliant: '符合', non_compliant: '不符合',
+      refusal_A: '拒答·A 未覆盖', refusal_B: '拒答·B 依据不足',
+      refusal_C: '拒答·C 解析存疑', degraded: '服务降级' }[v] || v);
+    const badge = v => ({ compliant: 'b-c', non_compliant: 'b-nc',
+      refusal_A: 'b-r', refusal_B: 'b-r', refusal_C: 'b-r', degraded: 'b-d' }[v] || 'b-d');
+
+    async function submit() {
+      running.value = true; report.value = null; logs.value = [];
+      doneNodes.value = []; currentNode.value = ''; elapsed.value = '';
+      const t0 = performance.now();
+      try {
+        const resp = await fetch('/reviews/stream', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ doc_text: doc.value, filename: 'web-demo.md' }),
+        });
+        const reader = resp.body.getReader(), dec = new TextDecoder();
+        let buf = '';
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          let i;
+          while ((i = buf.indexOf('\n\n')) >= 0) {
+            const frame = buf.slice(0, i); buf = buf.slice(i + 2);
+            const evLine = frame.split('\n').find(l => l.startsWith('event: '));
+            const dataLine = frame.split('\n').find(l => l.startsWith('data: '));
+            if (!dataLine) continue;
+            const kind = evLine ? evLine.slice(7) : 'node';
+            const data = JSON.parse(dataLine.slice(6));
+            if (kind === 'node') {
+              currentNode.value = data.agent;
+              if (!doneNodes.value.includes(data.agent)) doneNodes.value.push(data.agent);
+              logs.value.push(`[${data.agent}] ${data.detail || ''}`);
+            } else if (kind === 'report') {
+              report.value = data;
+              logs.value.push('[done] 报告生成');
+            }
+            log.value && (log.value.scrollTop = log.value.scrollHeight);
+          }
+        }
+      } catch (e) {
+        logs.value.push('[error] ' + e.message);
+      } finally {
+        elapsed.value = `耗时 ${((performance.now() - t0) / 1000).toFixed(1)}s`;
+        running.value = false; currentNode.value = '';
+      }
+    }
+    return { NODES, SAMPLE, doc, running, report, logs, doneNodes,
+             currentNode, elapsed, log, submit, label, badge };
+  },
+}).mount('#app');
+</script>
+</body>
+</html>

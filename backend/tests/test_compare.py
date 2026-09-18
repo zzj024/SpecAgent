@@ -77,8 +77,13 @@ def test_reinforcement_range():
 
 
 def test_undercut_dual_bound():
-    assert judge_item("咬边深度 0.8 mm", UNDERCUT).verdict == "non_compliant"
-    assert judge_item("咬边连续长度 150 mm", UNDERCUT).verdict == "non_compliant"
+    """双上限各归各：长度限 100 不得套深度限 0.5（评测二 15 条误报的回归钉）。"""
+    j = judge_item("咬边深度 0.8 mm", UNDERCUT)
+    assert j.verdict == "non_compliant" and "0.5" in j.rationale
+    j = judge_item("咬边连续长度 80 mm", UNDERCUT)
+    assert j.verdict == "compliant" and "100" in j.rationale
+    j = judge_item("咬边连续长度 150 mm", UNDERCUT)
+    assert j.verdict == "non_compliant" and "100" in j.rationale
     assert judge_item("咬边深度 0.3 mm", UNDERCUT).verdict == "compliant"
 
 

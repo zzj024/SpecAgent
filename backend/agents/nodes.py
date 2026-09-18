@@ -85,27 +85,53 @@ def router_node(state: ReviewState) -> dict:
             "events": [{"node": "router", "detail": f"domain={domain}, items={len(items)}"}]}
 
 
+def _expand_query(item: CheckItem) -> str:
+    """rule 版 Query Rewrite：属性锚词扩写。
+
+    短数值型查询（"相线 25 mm²，PE 导体 10 mm²"）与条文的词汇重叠太小，
+    rerank 分会卡在拒答线下（实测 0.583 < 0.60）——把该属性在条文里的
+    锚词（"保护导体 截面积"）并进查询，与条文共享词汇，分数回到 0.72+。
+    这是"快速路由优先，低置信 Query Rewrite 兜底"的检索级落点；
+    llm 轨可换 LLM 改写，本函数即 fallback。"""
+    from agents.compare import ATTRIBUTES, detect_attribute
+
+    attr = item.attribute or detect_attribute(item.text)
+    keys = ATTRIBUTES.get(attr, {}).get("clause_keys", [])
+    return f"{item.text} {' '.join(keys)}".strip()
+
+
 def retriever_node(state: ReviewState) -> dict:
     """检索 Agent：逐项混合检索 + 重排，产候选条款（条款号+原文+分数）。
 
     只检索不判定——检索质量的可归因性要求这一步的行为完全由
-    检索配置决定（评测一的三档），混进判定逻辑就没法单独归因了。"""
+    检索配置决定（评测一的三档），混进判定逻辑就没法单独归因了。
+    低置信兜底：top1 分低于 A 级拒答线时先别急着判死，锚词扩写重试
+    一轮（Query Rewrite），两轮取 top1 分高者——A 级拒答只留给
+    重写后仍不相关的项，把"词汇不重叠"和"真的没覆盖"区分开。"""
     if state.get("findings") and state["findings"][0].verdict == "refusal_C":
         return {"candidates": []}                    # C 级单已整单拒答，免检索
 
     model = _get_model()
     per_item = []
     for it in state.get("items", []):
-        query = f"{it.tag} {it.text}".strip()
-        hits = hybrid_search(query, k=CANDIDATE_K, model=model)
-        if RERANK_ON:
-            hits = rerank(query, hits, k=RETRIEVAL_K)
-            for h in hits:                           # rerank 原始 logit → 0~1
-                h["score"] = round(_sigmoid(h.get("rerank", 0.0)), 4)
+        hits = _search_one(f"{it.tag} {it.text}".strip(), model)
+        if not hits or hits[0]["score"] < REFUSE_A_SCORE:      # 低置信 → 重写兜底
+            rewritten = _search_one(_expand_query(it), model)
+            if rewritten and (not hits or rewritten[0]["score"] > hits[0]["score"]):
+                hits = rewritten
         per_item.append({"seq": it.seq, "hits": hits})
 
     return {"candidates": per_item,
             "events": [{"node": "retriever", "detail": f"{len(per_item)} 项检索完成"}]}
+
+
+def _search_one(query: str, model) -> list[dict]:
+    hits = hybrid_search(query, k=CANDIDATE_K, model=model)
+    if RERANK_ON:
+        hits = rerank(query, hits, k=RETRIEVAL_K)
+        for h in hits:                               # rerank 原始 logit → 0~1
+            h["score"] = round(_sigmoid(h.get("rerank", 0.0)), 4)
+    return hits
 
 
 _LLM_SYSTEM = (

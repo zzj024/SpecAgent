@@ -1,0 +1,22 @@
+{
+  "date": "2026-09-17",
+  "n_qa": 50,
+  "k": 5,
+  "results": {
+    "vector": {
+      "recall@5": 1.0,
+      "mrr": 0.965,
+      "avg_latency_s": 0.086
+    },
+    "hybrid": {
+      "recall@5": 0.98,
+      "mrr": 0.9567,
+      "avg_latency_s": 0.132
+    },
+    "rerank": {
+      "recall@5": 1.0,
+      "mrr": 0.965,
+      "avg_latency_s": 7.053
+    }
+  }
+}

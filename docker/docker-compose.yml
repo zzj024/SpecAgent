@@ -1,0 +1,57 @@
+# 全栈一键启动（M3）：pg + 语料入库 + API/前端
+# 用法：docker compose -f docker/docker-compose.yml up -d --build
+# 首次启动：ingest 服务会下载 BGE-M3（约 2GB）做 embedding，
+# 入库完成后 api 才可服务——看 `docker compose logs -f ingest` 等待完成。
+# 开发期只起 PG：用 docker-compose.dev.yml。
+services:
+  pg:
+    image: pgvector/pgvector:pg16
+    container_name: spec-agent-pg
+    environment:
+      POSTGRES_USER: specagent
+      POSTGRES_PASSWORD: specagent
+      POSTGRES_DB: specagent
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U specagent -d specagent"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ingest:
+    build: { context: .., dockerfile: docker/Dockerfile }
+    container_name: spec-agent-ingest
+    environment:
+      SPECAGENT_DSN: postgresql://specagent:specagent@pg:5432/specagent
+      HF_HOME: /cache/hf
+    volumes:
+      - hfcache:/cache/hf
+    command: >
+      sh -c "cat backend/rag/schema.sql | psql $$SPECAGENT_DSN ||
+             (pip install --no-cache-dir psycopg && cat backend/rag/schema.sql | python -c \"
+             import sys, psycopg
+             conn = psycopg.connect('postgresql://specagent:specagent@pg:5432/specagent')
+             conn.autocommit = True
+             conn.cursor().execute(sys.stdin.read())\") &&
+             python -m rag.store corpus/SPGT21001-2025_机械制图与尺寸公差.md corpus/SPGT21002-2025_焊接质量验收规范.md corpus/SPGT21003-2025_电气设备标识与安全要求.md"
+    depends_on:
+      pg: { condition: service_healthy }
+    restart: "no"
+
+  api:
+    build: { context: .., dockerfile: docker/Dockerfile }
+    container_name: spec-agent-api
+    environment:
+      SPECAGENT_DSN: postgresql://specagent:specagent@pg:5432/specagent
+      HF_HOME: /cache/hf
+    ports: ["8000:8000"]
+    volumes:
+      - hfcache:/cache/hf
+    depends_on:
+      pg: { condition: service_healthy }
+      ingest: { condition: service_completed_successfully }
+
+volumes:
+  pgdata:
+  hfcache:

@@ -1,0 +1,295 @@
+{"doc_id": "eval2-doc00", "seq": 0, "attr": "ra", "violated": false, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 0.4 μm"}
+{"doc_id": "eval2-doc00", "seq": 1, "attr": "undercut_d", "violated": false, "text": "[咬边] 咬边深度 0.19 mm"}
+{"doc_id": "eval2-doc00", "seq": 2, "attr": "reinforce", "violated": false, "text": "[余高] 对接焊缝余高 1.8 mm"}
+{"doc_id": "eval2-doc00", "seq": 3, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 827 mm"}
+{"doc_id": "eval2-doc00", "seq": 4, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 2.5 Ω"}
+{"doc_id": "eval2-doc00", "seq": 5, "attr": "color_pe", "violated": false, "text": "[标识] PE 保护导体采用绿黄双色"}
+{"doc_id": "eval2-doc00", "seq": 6, "attr": "ra_raw", "violated": false, "text": "[粗糙度] 非加工表面粗糙度 Ra 19.7 μm"}
+{"doc_id": "eval2-doc00", "seq": 7, "attr": "misalign", "violated": false, "text": "[错边] 板厚 20 mm 对接接头错边量 1.32 mm"}
+{"doc_id": "eval2-doc01", "seq": 0, "attr": "reinforce", "violated": false, "text": "[余高] 对接焊缝余高 0.7 mm"}
+{"doc_id": "eval2-doc01", "seq": 1, "attr": "repair", "violated": false, "text": "[返修] 同一焊缝部位返修 1 次"}
+{"doc_id": "eval2-doc01", "seq": 2, "attr": "aisle_back", "violated": false, "text": "[通道] 电气柜后维修通道宽度 909 mm"}
+{"doc_id": "eval2-doc01", "seq": 3, "attr": "ra", "violated": false, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 0.7 μm"}
+{"doc_id": "eval2-doc01", "seq": 4, "attr": "aisle_back", "violated": false, "text": "[通道] 电气柜后维修通道宽度 622 mm"}
+{"doc_id": "eval2-doc01", "seq": 5, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 1270 mm"}
+{"doc_id": "eval2-doc01", "seq": 6, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 78 mm"}
+{"doc_id": "eval2-doc01", "seq": 7, "attr": "scale_ratio", "violated": false, "text": "[比例] 主视图绘图比例 1:1"}
+{"doc_id": "eval2-doc01", "seq": 8, "attr": "live_h", "violated": false, "text": "[安全] 高度 2493 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc01", "seq": 9, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 20 mm"}
+{"doc_id": "eval2-doc01", "seq": 10, "attr": "ra_raw", "violated": false, "text": "[粗糙度] 非加工表面粗糙度 Ra 16.7 μm"}
+{"doc_id": "eval2-doc02", "seq": 0, "attr": "color_pe", "violated": false, "text": "[标识] PE 保护导体采用绿黄双色"}
+{"doc_id": "eval2-doc02", "seq": 1, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 30 mm"}
+{"doc_id": "eval2-doc02", "seq": 2, "attr": "reinforce", "violated": false, "text": "[余高] 对接焊缝余高 1.4 mm"}
+{"doc_id": "eval2-doc02", "seq": 3, "attr": "ra_raw", "violated": false, "text": "[粗糙度] 非加工表面粗糙度 Ra 10.3 μm"}
+{"doc_id": "eval2-doc02", "seq": 4, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 1.4 Ω"}
+{"doc_id": "eval2-doc02", "seq": 5, "attr": "aisle_back", "violated": false, "text": "[通道] 电气柜后维修通道宽度 949 mm"}
+{"doc_id": "eval2-doc02", "seq": 6, "attr": "live_h", "violated": false, "text": "[安全] 高度 2336 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc02", "seq": 7, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 25 mm²"}
+{"doc_id": "eval2-doc02", "seq": 8, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 25 mm²"}
+{"doc_id": "eval2-doc02", "seq": 9, "attr": "misalign", "violated": false, "text": "[错边] 板厚 20 mm 对接接头错边量 0.47 mm"}
+{"doc_id": "eval2-doc02", "seq": 10, "attr": "rt_pct", "violated": false, "text": "[探伤] 二级焊缝抽检探伤比例 51%"}
+{"doc_id": "eval2-doc02", "seq": 11, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 16 mm²"}
+{"doc_id": "eval2-doc03", "seq": 0, "attr": "misalign", "violated": false, "text": "[错边] 板厚 20 mm 对接接头错边量 0.54 mm"}
+{"doc_id": "eval2-doc03", "seq": 1, "attr": "live_h", "violated": false, "text": "[安全] 高度 2590 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc03", "seq": 2, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 3.6 Ω"}
+{"doc_id": "eval2-doc03", "seq": 3, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 370 ℃"}
+{"doc_id": "eval2-doc03", "seq": 4, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 1.2 Ω"}
+{"doc_id": "eval2-doc03", "seq": 5, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 20 mm²"}
+{"doc_id": "eval2-doc03", "seq": 6, "attr": "aisle_back", "violated": false, "text": "[通道] 电气柜后维修通道宽度 802 mm"}
+{"doc_id": "eval2-doc03", "seq": 7, "attr": "reinforce", "violated": false, "text": "[余高] 对接焊缝余高 2.7 mm"}
+{"doc_id": "eval2-doc03", "seq": 8, "attr": "ra", "violated": false, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 1.2 μm"}
+{"doc_id": "eval2-doc03", "seq": 9, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 28 mm"}
+{"doc_id": "eval2-doc03", "seq": 10, "attr": "undercut_d", "violated": false, "text": "[咬边] 咬边深度 0.21 mm"}
+{"doc_id": "eval2-doc04", "seq": 0, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 848 mm"}
+{"doc_id": "eval2-doc04", "seq": 1, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 357 ℃"}
+{"doc_id": "eval2-doc04", "seq": 2, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 956 mm"}
+{"doc_id": "eval2-doc04", "seq": 3, "attr": "misalign", "violated": false, "text": "[错边] 板厚 20 mm 对接接头错边量 1.20 mm"}
+{"doc_id": "eval2-doc04", "seq": 4, "attr": "repair", "violated": false, "text": "[返修] 同一焊缝部位返修 2 次"}
+{"doc_id": "eval2-doc04", "seq": 5, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 64 mm"}
+{"doc_id": "eval2-doc04", "seq": 6, "attr": "live_h", "violated": false, "text": "[安全] 高度 2332 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc04", "seq": 7, "attr": "scale_ratio", "violated": false, "text": "[比例] 主视图绘图比例 1:2"}
+{"doc_id": "eval2-doc04", "seq": 8, "attr": "rt_pct", "violated": false, "text": "[探伤] 二级焊缝抽检探伤比例 68%"}
+{"doc_id": "eval2-doc05", "seq": 0, "attr": "live_h", "violated": false, "text": "[安全] 高度 2532 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc05", "seq": 1, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 350 ℃"}
+{"doc_id": "eval2-doc05", "seq": 2, "attr": "live_h", "violated": false, "text": "[安全] 高度 2434 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc05", "seq": 3, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 25 mm²"}
+{"doc_id": "eval2-doc05", "seq": 4, "attr": "ra", "violated": false, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 1.3 μm"}
+{"doc_id": "eval2-doc05", "seq": 5, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 1319 mm"}
+{"doc_id": "eval2-doc05", "seq": 6, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 3.7 Ω"}
+{"doc_id": "eval2-doc05", "seq": 7, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 390 ℃"}
+{"doc_id": "eval2-doc05", "seq": 8, "attr": "undercut_d", "violated": false, "text": "[咬边] 咬边深度 0.22 mm"}
+{"doc_id": "eval2-doc05", "seq": 9, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 2.7 Ω"}
+{"doc_id": "eval2-doc05", "seq": 10, "attr": "ra_raw", "violated": false, "text": "[粗糙度] 非加工表面粗糙度 Ra 17.7 μm"}
+{"doc_id": "eval2-doc05", "seq": 11, "attr": "misalign", "violated": false, "text": "[错边] 板厚 20 mm 对接接头错边量 0.44 mm"}
+{"doc_id": "eval2-doc06", "seq": 0, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 369 ℃"}
+{"doc_id": "eval2-doc06", "seq": 1, "attr": "aisle_back", "violated": false, "text": "[通道] 电气柜后维修通道宽度 722 mm"}
+{"doc_id": "eval2-doc06", "seq": 2, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 353 ℃"}
+{"doc_id": "eval2-doc06", "seq": 3, "attr": "ra", "violated": false, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 0.7 μm"}
+{"doc_id": "eval2-doc06", "seq": 4, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 82 mm"}
+{"doc_id": "eval2-doc06", "seq": 5, "attr": "ra", "violated": false, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 1.5 μm"}
+{"doc_id": "eval2-doc06", "seq": 6, "attr": "color_pe", "violated": false, "text": "[标识] PE 保护导体采用绿黄双色"}
+{"doc_id": "eval2-doc06", "seq": 7, "attr": "color_pe", "violated": false, "text": "[标识] PE 保护导体采用绿黄双色"}
+{"doc_id": "eval2-doc06", "seq": 8, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 16 mm²"}
+{"doc_id": "eval2-doc07", "seq": 0, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 25 mm²"}
+{"doc_id": "eval2-doc07", "seq": 1, "attr": "live_h", "violated": false, "text": "[安全] 高度 2531 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc07", "seq": 2, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 357 ℃"}
+{"doc_id": "eval2-doc07", "seq": 3, "attr": "scale_ratio", "violated": false, "text": "[比例] 主视图绘图比例 1:1"}
+{"doc_id": "eval2-doc07", "seq": 4, "attr": "ground_res", "violated": true, "text": "[接地] 电气柜保护接地电阻 5.7 Ω"}
+{"doc_id": "eval2-doc07", "seq": 5, "attr": "live_h", "violated": true, "text": "[安全] 高度 2073 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc07", "seq": 6, "attr": "scale_ratio", "violated": true, "text": "[比例] 主视图绘图比例 1:3"}
+{"doc_id": "eval2-doc07", "seq": 7, "attr": "dry_temp", "violated": true, "text": "[烘干] 低氢型焊条烘干温度 337 ℃"}
+{"doc_id": "eval2-doc07", "seq": 8, "attr": "repair", "violated": false, "text": "[返修] 同一焊缝部位返修 2 次"}
+{"doc_id": "eval2-doc07", "seq": 9, "attr": "live_h", "violated": false, "text": "[安全] 高度 2412 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc07", "seq": 10, "attr": "color_pe", "violated": false, "text": "[标识] PE 保护导体采用绿黄双色"}
+{"doc_id": "eval2-doc08", "seq": 0, "attr": "ra_raw", "violated": false, "text": "[粗糙度] 非加工表面粗糙度 Ra 15.2 μm"}
+{"doc_id": "eval2-doc08", "seq": 1, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 3.2 Ω"}
+{"doc_id": "eval2-doc08", "seq": 2, "attr": "reinforce", "violated": true, "text": "[余高] 对接焊缝余高 5.5 mm"}
+{"doc_id": "eval2-doc08", "seq": 3, "attr": "color_pe", "violated": false, "text": "[标识] PE 保护导体采用绿黄双色"}
+{"doc_id": "eval2-doc08", "seq": 4, "attr": "pe_section", "violated": true, "text": "[PE] 相线 25 mm²，PE 导体 10 mm²"}
+{"doc_id": "eval2-doc08", "seq": 5, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 29.2 μm"}
+{"doc_id": "eval2-doc08", "seq": 6, "attr": "reinforce", "violated": true, "text": "[余高] 对接焊缝余高 5.1 mm"}
+{"doc_id": "eval2-doc08", "seq": 7, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 1.7 Ω"}
+{"doc_id": "eval2-doc09", "seq": 0, "attr": "rt_pct", "violated": true, "text": "[探伤] 二级焊缝抽检探伤比例 12%"}
+{"doc_id": "eval2-doc09", "seq": 1, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 1363 mm"}
+{"doc_id": "eval2-doc09", "seq": 2, "attr": "ground_res", "violated": true, "text": "[接地] 电气柜保护接地电阻 5.0 Ω"}
+{"doc_id": "eval2-doc09", "seq": 3, "attr": "live_h", "violated": true, "text": "[安全] 高度 2233 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc09", "seq": 4, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 60.0 μm"}
+{"doc_id": "eval2-doc09", "seq": 5, "attr": "misalign", "violated": false, "text": "[错边] 板厚 20 mm 对接接头错边量 1.54 mm"}
+{"doc_id": "eval2-doc09", "seq": 6, "attr": "undercut_l", "violated": true, "text": "[咬边] 咬边连续长度 121 mm"}
+{"doc_id": "eval2-doc09", "seq": 7, "attr": "pe_section", "violated": true, "text": "[PE] 相线 25 mm²，PE 导体 10 mm²"}
+{"doc_id": "eval2-doc09", "seq": 8, "attr": "reinforce", "violated": false, "text": "[余高] 对接焊缝余高 0.9 mm"}
+{"doc_id": "eval2-doc09", "seq": 9, "attr": "reinforce", "violated": false, "text": "[余高] 对接焊缝余高 1.7 mm"}
+{"doc_id": "eval2-doc09", "seq": 10, "attr": "rt_pct", "violated": false, "text": "[探伤] 二级焊缝抽检探伤比例 47%"}
+{"doc_id": "eval2-doc10", "seq": 0, "attr": "color_pe", "violated": true, "text": "[标识] PE 保护导体采用红色"}
+{"doc_id": "eval2-doc10", "seq": 1, "attr": "scale_ratio", "violated": false, "text": "[比例] 主视图绘图比例 1:5"}
+{"doc_id": "eval2-doc10", "seq": 2, "attr": "ra", "violated": true, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 3.2 μm"}
+{"doc_id": "eval2-doc10", "seq": 3, "attr": "misalign", "violated": true, "text": "[错边] 板厚 20 mm 对接接头错边量 2.36 mm"}
+{"doc_id": "eval2-doc10", "seq": 4, "attr": "color_pe", "violated": true, "text": "[标识] PE 保护导体采用黄色"}
+{"doc_id": "eval2-doc10", "seq": 5, "attr": "aisle_back", "violated": false, "text": "[通道] 电气柜后维修通道宽度 857 mm"}
+{"doc_id": "eval2-doc10", "seq": 6, "attr": "undercut_d", "violated": false, "text": "[咬边] 咬边深度 0.47 mm"}
+{"doc_id": "eval2-doc10", "seq": 7, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 1343 mm"}
+{"doc_id": "eval2-doc10", "seq": 8, "attr": "aisle_front", "violated": true, "text": "[通道] 电气柜前维修通道宽度 580 mm"}
+{"doc_id": "eval2-doc10", "seq": 9, "attr": "aisle_back", "violated": true, "text": "[通道] 电气柜后维修通道宽度 414 mm"}
+{"doc_id": "eval2-doc10", "seq": 10, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 3.9 Ω"}
+{"doc_id": "eval2-doc11", "seq": 0, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 25 mm²"}
+{"doc_id": "eval2-doc11", "seq": 1, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 45.2 μm"}
+{"doc_id": "eval2-doc11", "seq": 2, "attr": "ra_raw", "violated": false, "text": "[粗糙度] 非加工表面粗糙度 Ra 12.3 μm"}
+{"doc_id": "eval2-doc11", "seq": 3, "attr": "pe_section", "violated": true, "text": "[PE] 相线 25 mm²，PE 导体 12 mm²"}
+{"doc_id": "eval2-doc11", "seq": 4, "attr": "misalign", "violated": false, "text": "[错边] 板厚 20 mm 对接接头错边量 0.53 mm"}
+{"doc_id": "eval2-doc11", "seq": 5, "attr": "live_h", "violated": true, "text": "[安全] 高度 2266 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc11", "seq": 6, "attr": "repair", "violated": false, "text": "[返修] 同一焊缝部位返修 1 次"}
+{"doc_id": "eval2-doc11", "seq": 7, "attr": "repair", "violated": false, "text": "[返修] 同一焊缝部位返修 0 次"}
+{"doc_id": "eval2-doc12", "seq": 0, "attr": "misalign", "violated": false, "text": "[错边] 板厚 20 mm 对接接头错边量 1.61 mm"}
+{"doc_id": "eval2-doc12", "seq": 1, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 3.6 Ω"}
+{"doc_id": "eval2-doc12", "seq": 2, "attr": "undercut_d", "violated": true, "text": "[咬边] 咬边深度 0.82 mm"}
+{"doc_id": "eval2-doc12", "seq": 3, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 30 mm"}
+{"doc_id": "eval2-doc12", "seq": 4, "attr": "aisle_back", "violated": true, "text": "[通道] 电气柜后维修通道宽度 512 mm"}
+{"doc_id": "eval2-doc12", "seq": 5, "attr": "ra_raw", "violated": false, "text": "[粗糙度] 非加工表面粗糙度 Ra 21.9 μm"}
+{"doc_id": "eval2-doc12", "seq": 6, "attr": "rt_pct", "violated": false, "text": "[探伤] 二级焊缝抽检探伤比例 58%"}
+{"doc_id": "eval2-doc12", "seq": 7, "attr": "live_h", "violated": true, "text": "[安全] 高度 2213 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc12", "seq": 8, "attr": "live_h", "violated": true, "text": "[安全] 高度 2234 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc12", "seq": 9, "attr": "ra_raw", "violated": false, "text": "[粗糙度] 非加工表面粗糙度 Ra 16.2 μm"}
+{"doc_id": "eval2-doc13", "seq": 0, "attr": "undercut_d", "violated": true, "text": "[咬边] 咬边深度 0.98 mm"}
+{"doc_id": "eval2-doc13", "seq": 1, "attr": "ground_res", "violated": true, "text": "[接地] 电气柜保护接地电阻 9.1 Ω"}
+{"doc_id": "eval2-doc13", "seq": 2, "attr": "live_h", "violated": false, "text": "[安全] 高度 2322 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc13", "seq": 3, "attr": "scale_ratio", "violated": false, "text": "[比例] 主视图绘图比例 1:1"}
+{"doc_id": "eval2-doc13", "seq": 4, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 37.3 μm"}
+{"doc_id": "eval2-doc13", "seq": 5, "attr": "ra_raw", "violated": false, "text": "[粗糙度] 非加工表面粗糙度 Ra 8.8 μm"}
+{"doc_id": "eval2-doc13", "seq": 6, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 366 ℃"}
+{"doc_id": "eval2-doc13", "seq": 7, "attr": "undercut_d", "violated": true, "text": "[咬边] 咬边深度 0.70 mm"}
+{"doc_id": "eval2-doc13", "seq": 8, "attr": "repair", "violated": true, "text": "[返修] 同一焊缝部位返修 4 次"}
+{"doc_id": "eval2-doc13", "seq": 9, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 1364 mm"}
+{"doc_id": "eval2-doc13", "seq": 10, "attr": "reinforce", "violated": false, "text": "[余高] 对接焊缝余高 2.3 mm"}
+{"doc_id": "eval2-doc13", "seq": 11, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 2.5 Ω"}
+{"doc_id": "eval2-doc14", "seq": 0, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 49.2 μm"}
+{"doc_id": "eval2-doc14", "seq": 1, "attr": "color_pe", "violated": true, "text": "[标识] PE 保护导体采用红色"}
+{"doc_id": "eval2-doc14", "seq": 2, "attr": "color_pe", "violated": true, "text": "[标识] PE 保护导体采用黄色"}
+{"doc_id": "eval2-doc14", "seq": 3, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 399 ℃"}
+{"doc_id": "eval2-doc14", "seq": 4, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 25 mm²"}
+{"doc_id": "eval2-doc14", "seq": 5, "attr": "repair", "violated": true, "text": "[返修] 同一焊缝部位返修 4 次"}
+{"doc_id": "eval2-doc14", "seq": 6, "attr": "scale_ratio", "violated": true, "text": "[比例] 主视图绘图比例 1:3"}
+{"doc_id": "eval2-doc14", "seq": 7, "attr": "scale_ratio", "violated": false, "text": "[比例] 主视图绘图比例 1:1"}
+{"doc_id": "eval2-doc15", "seq": 0, "attr": "live_h", "violated": false, "text": "[安全] 高度 2355 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc15", "seq": 1, "attr": "aisle_back", "violated": false, "text": "[通道] 电气柜后维修通道宽度 795 mm"}
+{"doc_id": "eval2-doc15", "seq": 2, "attr": "color_pe", "violated": true, "text": "[标识] PE 保护导体采用红色"}
+{"doc_id": "eval2-doc15", "seq": 3, "attr": "ra", "violated": false, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 1.4 μm"}
+{"doc_id": "eval2-doc15", "seq": 4, "attr": "aisle_front", "violated": true, "text": "[通道] 电气柜前维修通道宽度 613 mm"}
+{"doc_id": "eval2-doc15", "seq": 5, "attr": "undercut_l", "violated": true, "text": "[咬边] 咬边连续长度 135 mm"}
+{"doc_id": "eval2-doc15", "seq": 6, "attr": "color_pe", "violated": true, "text": "[标识] PE 保护导体采用黄色"}
+{"doc_id": "eval2-doc15", "seq": 7, "attr": "aisle_back", "violated": false, "text": "[通道] 电气柜后维修通道宽度 779 mm"}
+{"doc_id": "eval2-doc15", "seq": 8, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 20 mm²"}
+{"doc_id": "eval2-doc16", "seq": 0, "attr": "reinforce", "violated": true, "text": "[余高] 对接焊缝余高 5.9 mm"}
+{"doc_id": "eval2-doc16", "seq": 1, "attr": "ground_res", "violated": true, "text": "[接地] 电气柜保护接地电阻 6.0 Ω"}
+{"doc_id": "eval2-doc16", "seq": 2, "attr": "misalign", "violated": true, "text": "[错边] 板厚 20 mm 对接接头错边量 2.43 mm"}
+{"doc_id": "eval2-doc16", "seq": 3, "attr": "undercut_d", "violated": false, "text": "[咬边] 咬边深度 0.27 mm"}
+{"doc_id": "eval2-doc16", "seq": 4, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 50.8 μm"}
+{"doc_id": "eval2-doc16", "seq": 5, "attr": "aisle_back", "violated": false, "text": "[通道] 电气柜后维修通道宽度 760 mm"}
+{"doc_id": "eval2-doc16", "seq": 6, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 65 mm"}
+{"doc_id": "eval2-doc16", "seq": 7, "attr": "dry_temp", "violated": true, "text": "[烘干] 低氢型焊条烘干温度 338 ℃"}
+{"doc_id": "eval2-doc16", "seq": 8, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 1.8 Ω"}
+{"doc_id": "eval2-doc17", "seq": 0, "attr": "reinforce", "violated": false, "text": "[余高] 对接焊缝余高 2.2 mm"}
+{"doc_id": "eval2-doc17", "seq": 1, "attr": "ra", "violated": true, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 3.3 μm"}
+{"doc_id": "eval2-doc17", "seq": 2, "attr": "misalign", "violated": false, "text": "[错边] 板厚 20 mm 对接接头错边量 1.32 mm"}
+{"doc_id": "eval2-doc17", "seq": 3, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 385 ℃"}
+{"doc_id": "eval2-doc17", "seq": 4, "attr": "aisle_back", "violated": true, "text": "[通道] 电气柜后维修通道宽度 432 mm"}
+{"doc_id": "eval2-doc17", "seq": 5, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 1.2 Ω"}
+{"doc_id": "eval2-doc17", "seq": 6, "attr": "live_h", "violated": false, "text": "[安全] 高度 2494 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc17", "seq": 7, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 978 mm"}
+{"doc_id": "eval2-doc17", "seq": 8, "attr": "reinforce", "violated": true, "text": "[余高] 对接焊缝余高 5.0 mm"}
+{"doc_id": "eval2-doc17", "seq": 9, "attr": "misalign", "violated": true, "text": "[错边] 板厚 20 mm 对接接头错边量 2.66 mm"}
+{"doc_id": "eval2-doc17", "seq": 10, "attr": "live_h", "violated": true, "text": "[安全] 高度 2180 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc17", "seq": 11, "attr": "color_pe", "violated": false, "text": "[标识] PE 保护导体采用绿黄双色"}
+{"doc_id": "eval2-doc18", "seq": 0, "attr": "undercut_d", "violated": false, "text": "[咬边] 咬边深度 0.23 mm"}
+{"doc_id": "eval2-doc18", "seq": 1, "attr": "reinforce", "violated": true, "text": "[余高] 对接焊缝余高 5.5 mm"}
+{"doc_id": "eval2-doc18", "seq": 2, "attr": "aisle_back", "violated": true, "text": "[通道] 电气柜后维修通道宽度 460 mm"}
+{"doc_id": "eval2-doc18", "seq": 3, "attr": "repair", "violated": false, "text": "[返修] 同一焊缝部位返修 2 次"}
+{"doc_id": "eval2-doc18", "seq": 4, "attr": "undercut_l", "violated": true, "text": "[咬边] 咬边连续长度 149 mm"}
+{"doc_id": "eval2-doc18", "seq": 5, "attr": "rt_pct", "violated": true, "text": "[探伤] 二级焊缝抽检探伤比例 8%"}
+{"doc_id": "eval2-doc18", "seq": 6, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 3.3 Ω"}
+{"doc_id": "eval2-doc18", "seq": 7, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 359 ℃"}
+{"doc_id": "eval2-doc19", "seq": 0, "attr": "ra", "violated": true, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 5.4 μm"}
+{"doc_id": "eval2-doc19", "seq": 1, "attr": "live_h", "violated": true, "text": "[安全] 高度 2012 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc19", "seq": 2, "attr": "repair", "violated": false, "text": "[返修] 同一焊缝部位返修 0 次"}
+{"doc_id": "eval2-doc19", "seq": 3, "attr": "aisle_back", "violated": true, "text": "[通道] 电气柜后维修通道宽度 578 mm"}
+{"doc_id": "eval2-doc19", "seq": 4, "attr": "rt_pct", "violated": false, "text": "[探伤] 二级焊缝抽检探伤比例 86%"}
+{"doc_id": "eval2-doc19", "seq": 5, "attr": "color_pe", "violated": true, "text": "[标识] PE 保护导体采用黄色"}
+{"doc_id": "eval2-doc19", "seq": 6, "attr": "repair", "violated": true, "text": "[返修] 同一焊缝部位返修 3 次"}
+{"doc_id": "eval2-doc19", "seq": 7, "attr": "aisle_front", "violated": true, "text": "[通道] 电气柜前维修通道宽度 785 mm"}
+{"doc_id": "eval2-doc20", "seq": 0, "attr": "color_pe", "violated": false, "text": "[标识] PE 保护导体采用绿黄双色"}
+{"doc_id": "eval2-doc20", "seq": 1, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 34.8 μm"}
+{"doc_id": "eval2-doc20", "seq": 2, "attr": "scale_ratio", "violated": false, "text": "[比例] 主视图绘图比例 1:1"}
+{"doc_id": "eval2-doc20", "seq": 3, "attr": "rt_pct", "violated": true, "text": "[探伤] 二级焊缝抽检探伤比例 18%"}
+{"doc_id": "eval2-doc20", "seq": 4, "attr": "dry_temp", "violated": true, "text": "[烘干] 低氢型焊条烘干温度 427 ℃"}
+{"doc_id": "eval2-doc20", "seq": 5, "attr": "dry_temp", "violated": true, "text": "[烘干] 低氢型焊条烘干温度 425 ℃"}
+{"doc_id": "eval2-doc20", "seq": 6, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 66 mm"}
+{"doc_id": "eval2-doc20", "seq": 7, "attr": "aisle_back", "violated": true, "text": "[通道] 电气柜后维修通道宽度 419 mm"}
+{"doc_id": "eval2-doc20", "seq": 8, "attr": "rt_pct", "violated": true, "text": "[探伤] 二级焊缝抽检探伤比例 16%"}
+{"doc_id": "eval2-doc21", "seq": 0, "attr": "reinforce", "violated": true, "text": "[余高] 对接焊缝余高 5.8 mm"}
+{"doc_id": "eval2-doc21", "seq": 1, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 84 mm"}
+{"doc_id": "eval2-doc21", "seq": 2, "attr": "color_pe", "violated": false, "text": "[标识] PE 保护导体采用绿黄双色"}
+{"doc_id": "eval2-doc21", "seq": 3, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 58.2 μm"}
+{"doc_id": "eval2-doc21", "seq": 4, "attr": "scale_ratio", "violated": false, "text": "[比例] 主视图绘图比例 1:1"}
+{"doc_id": "eval2-doc21", "seq": 5, "attr": "misalign", "violated": true, "text": "[错边] 板厚 20 mm 对接接头错边量 3.33 mm"}
+{"doc_id": "eval2-doc21", "seq": 6, "attr": "scale_ratio", "violated": true, "text": "[比例] 主视图绘图比例 1:7"}
+{"doc_id": "eval2-doc21", "seq": 7, "attr": "reinforce", "violated": true, "text": "[余高] 对接焊缝余高 4.7 mm"}
+{"doc_id": "eval2-doc21", "seq": 8, "attr": "misalign", "violated": false, "text": "[错边] 板厚 20 mm 对接接头错边量 1.71 mm"}
+{"doc_id": "eval2-doc21", "seq": 9, "attr": "undercut_l", "violated": true, "text": "[咬边] 咬边连续长度 148 mm"}
+{"doc_id": "eval2-doc22", "seq": 0, "attr": "pe_section", "violated": true, "text": "[PE] 相线 25 mm²，PE 导体 10 mm²"}
+{"doc_id": "eval2-doc22", "seq": 1, "attr": "live_h", "violated": false, "text": "[安全] 高度 2342 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc22", "seq": 2, "attr": "misalign", "violated": true, "text": "[错边] 板厚 20 mm 对接接头错边量 3.07 mm"}
+{"doc_id": "eval2-doc22", "seq": 3, "attr": "aisle_front", "violated": true, "text": "[通道] 电气柜前维修通道宽度 569 mm"}
+{"doc_id": "eval2-doc22", "seq": 4, "attr": "dry_temp", "violated": true, "text": "[烘干] 低氢型焊条烘干温度 329 ℃"}
+{"doc_id": "eval2-doc22", "seq": 5, "attr": "repair", "violated": false, "text": "[返修] 同一焊缝部位返修 1 次"}
+{"doc_id": "eval2-doc22", "seq": 6, "attr": "reinforce", "violated": false, "text": "[余高] 对接焊缝余高 1.4 mm"}
+{"doc_id": "eval2-doc22", "seq": 7, "attr": "reinforce", "violated": true, "text": "[余高] 对接焊缝余高 4.0 mm"}
+{"doc_id": "eval2-doc22", "seq": 8, "attr": "misalign", "violated": false, "text": "[错边] 板厚 20 mm 对接接头错边量 0.72 mm"}
+{"doc_id": "eval2-doc22", "seq": 9, "attr": "ra", "violated": false, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 1.3 μm"}
+{"doc_id": "eval2-doc22", "seq": 10, "attr": "undercut_l", "violated": true, "text": "[咬边] 咬边连续长度 158 mm"}
+{"doc_id": "eval2-doc23", "seq": 0, "attr": "aisle_back", "violated": true, "text": "[通道] 电气柜后维修通道宽度 405 mm"}
+{"doc_id": "eval2-doc23", "seq": 1, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 25 mm²"}
+{"doc_id": "eval2-doc23", "seq": 2, "attr": "undercut_d", "violated": false, "text": "[咬边] 咬边深度 0.16 mm"}
+{"doc_id": "eval2-doc23", "seq": 3, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 30.3 μm"}
+{"doc_id": "eval2-doc23", "seq": 4, "attr": "ra", "violated": false, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 1.2 μm"}
+{"doc_id": "eval2-doc23", "seq": 5, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 386 ℃"}
+{"doc_id": "eval2-doc23", "seq": 6, "attr": "live_h", "violated": false, "text": "[安全] 高度 2411 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc23", "seq": 7, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 69 mm"}
+{"doc_id": "eval2-doc23", "seq": 8, "attr": "ground_res", "violated": true, "text": "[接地] 电气柜保护接地电阻 8.3 Ω"}
+{"doc_id": "eval2-doc23", "seq": 9, "attr": "aisle_back", "violated": false, "text": "[通道] 电气柜后维修通道宽度 992 mm"}
+{"doc_id": "eval2-doc24", "seq": 0, "attr": "scale_ratio", "violated": false, "text": "[比例] 主视图绘图比例 1:1"}
+{"doc_id": "eval2-doc24", "seq": 1, "attr": "repair", "violated": true, "text": "[返修] 同一焊缝部位返修 4 次"}
+{"doc_id": "eval2-doc24", "seq": 2, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 923 mm"}
+{"doc_id": "eval2-doc24", "seq": 3, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 53.1 μm"}
+{"doc_id": "eval2-doc24", "seq": 4, "attr": "pe_section", "violated": true, "text": "[PE] 相线 25 mm²，PE 导体 10 mm²"}
+{"doc_id": "eval2-doc24", "seq": 5, "attr": "live_h", "violated": true, "text": "[安全] 高度 2077 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc24", "seq": 6, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 44.1 μm"}
+{"doc_id": "eval2-doc24", "seq": 7, "attr": "ra", "violated": true, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 4.8 μm"}
+{"doc_id": "eval2-doc24", "seq": 8, "attr": "undercut_d", "violated": false, "text": "[咬边] 咬边深度 0.13 mm"}
+{"doc_id": "eval2-doc24", "seq": 9, "attr": "ground_res", "violated": false, "text": "[接地] 电气柜保护接地电阻 2.8 Ω"}
+{"doc_id": "eval2-doc25", "seq": 0, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 20 mm²"}
+{"doc_id": "eval2-doc25", "seq": 1, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 16 mm²"}
+{"doc_id": "eval2-doc25", "seq": 2, "attr": "ra_raw", "violated": true, "text": "[粗糙度] 非加工表面粗糙度 Ra 54.2 μm"}
+{"doc_id": "eval2-doc25", "seq": 3, "attr": "live_h", "violated": true, "text": "[安全] 高度 1944 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc25", "seq": 4, "attr": "ground_res", "violated": true, "text": "[接地] 电气柜保护接地电阻 6.0 Ω"}
+{"doc_id": "eval2-doc25", "seq": 5, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 20 mm²"}
+{"doc_id": "eval2-doc25", "seq": 6, "attr": "aisle_front", "violated": true, "text": "[通道] 电气柜前维修通道宽度 624 mm"}
+{"doc_id": "eval2-doc25", "seq": 7, "attr": "misalign", "violated": true, "text": "[错边] 板厚 20 mm 对接接头错边量 3.20 mm"}
+{"doc_id": "eval2-doc26", "seq": 0, "attr": "repair", "violated": false, "text": "[返修] 同一焊缝部位返修 2 次"}
+{"doc_id": "eval2-doc26", "seq": 1, "attr": "misalign", "violated": true, "text": "[错边] 板厚 20 mm 对接接头错边量 3.21 mm"}
+{"doc_id": "eval2-doc26", "seq": 2, "attr": "ra", "violated": false, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 1.2 μm"}
+{"doc_id": "eval2-doc26", "seq": 3, "attr": "pe_section", "violated": true, "text": "[PE] 相线 25 mm²，PE 导体 12 mm²"}
+{"doc_id": "eval2-doc26", "seq": 4, "attr": "scale_ratio", "violated": false, "text": "[比例] 主视图绘图比例 1:2"}
+{"doc_id": "eval2-doc26", "seq": 5, "attr": "reinforce", "violated": false, "text": "[余高] 对接焊缝余高 2.5 mm"}
+{"doc_id": "eval2-doc26", "seq": 6, "attr": "aisle_back", "violated": true, "text": "[通道] 电气柜后维修通道宽度 423 mm"}
+{"doc_id": "eval2-doc26", "seq": 7, "attr": "undercut_l", "violated": true, "text": "[咬边] 咬边连续长度 147 mm"}
+{"doc_id": "eval2-doc26", "seq": 8, "attr": "color_pe", "violated": false, "text": "[标识] PE 保护导体采用绿黄双色"}
+{"doc_id": "eval2-doc26", "seq": 9, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 1026 mm"}
+{"doc_id": "eval2-doc26", "seq": 10, "attr": "undercut_d", "violated": false, "text": "[咬边] 咬边深度 0.26 mm"}
+{"doc_id": "eval2-doc26", "seq": 11, "attr": "ra", "violated": false, "text": "[粗糙度] 阶梯轴配合表面粗糙度 Ra 0.7 μm"}
+{"doc_id": "eval2-doc27", "seq": 0, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 85 mm"}
+{"doc_id": "eval2-doc27", "seq": 1, "attr": "dry_temp", "violated": false, "text": "[烘干] 低氢型焊条烘干温度 398 ℃"}
+{"doc_id": "eval2-doc27", "seq": 2, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 77 mm"}
+{"doc_id": "eval2-doc27", "seq": 3, "attr": "live_h", "violated": true, "text": "[安全] 高度 2205 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc27", "seq": 4, "attr": "dry_temp", "violated": true, "text": "[烘干] 低氢型焊条烘干温度 318 ℃"}
+{"doc_id": "eval2-doc27", "seq": 5, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 47 mm"}
+{"doc_id": "eval2-doc27", "seq": 6, "attr": "rt_pct", "violated": false, "text": "[探伤] 二级焊缝抽检探伤比例 49%"}
+{"doc_id": "eval2-doc27", "seq": 7, "attr": "undercut_d", "violated": true, "text": "[咬边] 咬边深度 0.82 mm"}
+{"doc_id": "eval2-doc27", "seq": 8, "attr": "reinforce", "violated": false, "text": "[余高] 对接焊缝余高 1.3 mm"}
+{"doc_id": "eval2-doc27", "seq": 9, "attr": "aisle_front", "violated": false, "text": "[通道] 电气柜前维修通道宽度 1346 mm"}
+{"doc_id": "eval2-doc27", "seq": 10, "attr": "undercut_l", "violated": false, "text": "[咬边] 咬边连续长度 26 mm"}
+{"doc_id": "eval2-doc27", "seq": 11, "attr": "aisle_front", "violated": true, "text": "[通道] 电气柜前维修通道宽度 640 mm"}
+{"doc_id": "eval2-doc28", "seq": 0, "attr": "live_h", "violated": true, "text": "[安全] 高度 2144 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc28", "seq": 1, "attr": "dry_temp", "violated": true, "text": "[烘干] 低氢型焊条烘干温度 414 ℃"}
+{"doc_id": "eval2-doc28", "seq": 2, "attr": "aisle_front", "violated": true, "text": "[通道] 电气柜前维修通道宽度 751 mm"}
+{"doc_id": "eval2-doc28", "seq": 3, "attr": "scale_ratio", "violated": true, "text": "[比例] 主视图绘图比例 1:3"}
+{"doc_id": "eval2-doc28", "seq": 4, "attr": "pe_section", "violated": true, "text": "[PE] 相线 25 mm²，PE 导体 10 mm²"}
+{"doc_id": "eval2-doc28", "seq": 5, "attr": "rt_pct", "violated": false, "text": "[探伤] 二级焊缝抽检探伤比例 39%"}
+{"doc_id": "eval2-doc28", "seq": 6, "attr": "pe_section", "violated": false, "text": "[PE] 相线 25 mm²，PE 导体 16 mm²"}
+{"doc_id": "eval2-doc28", "seq": 7, "attr": "repair", "violated": true, "text": "[返修] 同一焊缝部位返修 4 次"}
+{"doc_id": "eval2-doc29", "seq": 0, "attr": "live_h", "violated": false, "text": "[安全] 高度 2330 mm 的裸露带电部分未加装护罩"}
+{"doc_id": "eval2-doc29", "seq": 1, "attr": "ra_raw", "violated": false, "text": "[粗糙度] 非加工表面粗糙度 Ra 17.7 μm"}
+{"doc_id": "eval2-doc29", "seq": 2, "attr": "aisle_back", "violated": true, "text": "[通道] 电气柜后维修通道宽度 589 mm"}
+{"doc_id": "eval2-doc29", "seq": 3, "attr": "repair", "violated": true, "text": "[返修] 同一焊缝部位返修 3 次"}
+{"doc_id": "eval2-doc29", "seq": 4, "attr": "aisle_back", "violated": true, "text": "[通道] 电气柜后维修通道宽度 453 mm"}
+{"doc_id": "eval2-doc29", "seq": 5, "attr": "reinforce", "violated": true, "text": "[余高] 对接焊缝余高 5.1 mm"}
+{"doc_id": "eval2-doc29", "seq": 6, "attr": "dry_temp", "violated": true, "text": "[烘干] 低氢型焊条烘干温度 316 ℃"}
+{"doc_id": "eval2-doc29", "seq": 7, "attr": "rt_pct", "violated": true, "text": "[探伤] 二级焊缝抽检探伤比例 8%"}

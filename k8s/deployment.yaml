@@ -1,0 +1,38 @@
+# P2 演示清单：单副本 API 部署（扩展性说明见 README「部署」节）
+# kubectl apply -f k8s/deployment.yaml
+# 说明：生产化前提是模型权重走独立推理服务（本清单仅打包 API 进程，
+# HPA 扩的是无状态 API；PG/pgvector 与 embedding 服务应独立部署）。
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spec-agent-api
+  labels: { app: spec-agent }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: spec-agent }
+  template:
+    metadata:
+      labels: { app: spec-agent }
+    spec:
+      containers:
+        - name: api
+          image: spec-agent-api:latest
+          ports: [{ containerPort: 8000 }]
+          env:
+            - name: SPECAGENT_DSN
+              value: postgresql://specagent:specagent@pg:5432/specagent
+          resources:
+            requests: { cpu: "500m", memory: 2Gi }
+            limits: { memory: 4Gi }
+          readinessProbe:
+            httpGet: { path: /health, port: 8000 }
+            initialDelaySeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spec-agent-api
+spec:
+  selector: { app: spec-agent }
+  ports: [{ port: 8000, targetPort: 8000 }]

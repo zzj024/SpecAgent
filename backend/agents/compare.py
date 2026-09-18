@@ -182,20 +182,31 @@ def _numeric_range(item_text: str, clause: dict) -> Judgment | None:
 
 
 def _dual_bound(item_text: str, clause: dict) -> Judgment | None:
-    """双上限型（咬边：深度 ≤0.5 / 连续长度 ≤100）：按检查项提到哪个性状选句。"""
+    """双上限型（咬边：深度 ≤0.5 / 连续长度 ≤100）。
+
+    上限必须锚定关键词抽取：两条上限写在同一句里（"深度不得大于 0.5，
+    且连续长度不得大于 100"），无脑取句中第一个"不得大于"会把深度限
+    0.5 套到长度上（回归教训：评测二 15 条误报全源于此）。"""
     which = "长度" if ("长度" in item_text) else "深度"
-    s = next((x for x in _sentences(clause["content"]) if which in x and extract_bounds(x)), None)
+    s = next((x for x in _sentences(clause["content"]) if which in x), None)
     if s is None:
         return None
-    b = extract_bounds(s)
+    m = re.search(rf"{which}[^；。]*?不得大于\s*(\d+(?:\.\d+)?)", s)
+    if not m:
+        b = extract_bounds(s)
+        if not b or "upper" not in b:
+            return None
+        limit = b["upper"]
+    else:
+        limit = _num(m.group(1))
     val = extract_value(item_text)
-    if "upper" not in b or val is None:
+    if val is None:
         return None
-    ok = val <= b["upper"] + _EPS
+    ok = val <= limit + _EPS
     return Judgment(
         verdict="compliant" if ok else "non_compliant",
         confidence=0.9, clause_no=clause["clause_no"], quote=s,
-        rationale=f"咬边{which}条文上限 {b['upper']}，文档值 {val}"
+        rationale=f"咬边{which}条文上限 {limit}，文档值 {val}"
                   + ("，符合。" if ok else "，超限。"),
         evidence_score=clause.get("rerank", 0.0),
     )

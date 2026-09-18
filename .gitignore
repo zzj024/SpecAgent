@@ -15,10 +15,11 @@ models/
 corpus/raw_pdf/
 *.pdf
 
-# 评测产物（数字进 README，原始输出本地留存）
-evals/results/*.json
+# 评测结果 JSON 入库：它们是 README 数字面板的可复现性证据
+# （重跑评测脚本可逐字节再生成；日期后缀文件保留历史档）
 
 # IDE / 系统
 .idea/
 .vscode/
+.DS_Store
 Thumbs.db
