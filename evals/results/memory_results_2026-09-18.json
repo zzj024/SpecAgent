@@ -1,0 +1,17 @@
+{
+  "date": "2026-09-18",
+  "mode": "rule",
+  "n_docs": 10,
+  "baseline": {
+    "miss_rate": 0.0,
+    "n_nc_pred": 14,
+    "elapsed_s": 665.1
+  },
+  "treatment": {
+    "miss_rate": 0.0,
+    "n_nc_pred": 14,
+    "elapsed_s": 639.9
+  },
+  "memory_entries": 14,
+  "note": "rule 轨记忆只进 rationale 不进判定（设计使然）：预期两组判定一致；llm 轨（DEEPSEEK_API_KEY）下经验进 prompt，消融才有行为差"
+}

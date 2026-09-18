@@ -5,8 +5,7 @@
 > 证据三元组，证据不足分级拒答而不是硬答**；全程轨迹落库可审计，进程被 kill 后
 > 从断点续跑；所有效果数字由评测脚本离线复现。
 
-[![tests](https://img.shields.io/badge/pytest-58%20passed-brightgreen)]()
-[![python](https://img.shields.io/badge/python-3.11-blue)]()
+[![tests](https://img.shields.io/badge/pytest-58%20passed-brightgreen)]()[![python](https://img.shields.io/badge/python-3.11-blue)]()
 [![license](https://img.shields.io/badge/license-MIT-green)]()
 
 ## 为什么做这个
@@ -58,12 +57,19 @@
 | 指标 | 数字 | 复现命令 |
 |------|------|---------|
 | 检索 recall@5：纯向量 → +BM25 → +rerank | **1.00 → 0.98 → 1.00**（MRR 0.965/0.957/0.965，n=50） | `evals/run_retrieval_eval.py` |
-| 审查漏报率 / 误报率（30 份埋错文档 295 项） | **6.2% / 0%**（recall 0.938，precision 1.00） | `evals/gen_docs.py && evals/run_review_eval.py` |
+| 审查漏报率 / 误报率（30 份埋错文档 295 项） | **0% / 0%**（首轮 6.2%/8.2%，两个系统性 bug 修复后清零，归因见 `docs/问题与解决记录.md` P20/P21） | `evals/gen_docs.py && evals/run_review_eval.py` |
 | 证据条款命中（不符合结论引用的条款号正确率） | **1.00** | 同上 |
-| 拒答：A 级 / B 级 / C 级正确率，不应拒误拒率 | 见 `evals/results/refusal_results_*.json` | `evals/run_refusal_eval.py` |
-| 工作记忆压缩 token 节省（20 项长单） | 见 `evals/results/compression_results_*.json` | `evals/run_compression_eval.py` |
-| kill -9 断点续跑成功率（注入 10 次，5 节点轮转） | 见 `evals/results/checkpoint_results_*.json` | `evals/run_checkpoint_eval.py` |
-| pytest | **58 passed**（43 快速单测 + 15 集成） | `pytest && pytest -m integration` |
+| 拒答：A 级 / B 级 / C 级正确率 | **90% / 100% / 100%**，不应拒误拒率 **0%** | `evals/run_refusal_eval.py` |
+| 记忆消融（10 文档 × 有/无经验库） | rule 轨两组判定一致（设计使然：记忆注入 rationale 不进判定）；经验库沉淀 14 条 | `evals/run_memory_eval.py` |
+| 工作记忆压缩（20 项长单累计 token） | 滑动窗口 **省 57%** / Compact **省 51%**，结论一致率 100% | `evals/run_compression_eval.py` |
+| kill -9 断点续跑成功率（5 节点轮转注入 10 次） | **100%**（无重复结论、与基线逐项一致） | `evals/run_checkpoint_eval.py` |
+| pytest | **58 passed**（43 快速单测 + 15 集成，含 kill 续跑端到端） | `pytest && pytest -m integration` |
+
+> **评测口径（诚实声明）**：埋错评测集由固定种子从规则比较器覆盖的属性模板生成，
+> 满分说明"rule 轨在其声明的覆盖范围内判定可靠 + 修复后无残留"，**不等于**任意
+> 文档满分——超出属性模板的真实文档需 llm 轨（`DEEPSEEK_API_KEY`）判定，
+> 漏报/误报在该口径下需重测。A 级 90% 的 1 例失败（消防通道）与修复史见
+> `evals/results/refusal_results_*.json` 与问题档案。
 
 > 埋错法评测集由固定种子生成（`evals/gen_docs.py`，seed=42）：
 > 30 份文档 × 8~12 检查项，埋 3~6 处已知违规，含 7 份完全合规纯样本。

@@ -1,0 +1,14 @@
+{
+  "date": "2026-09-18",
+  "mode": "rule",
+  "n_items": 20,
+  "cumulative_tokens": {
+    "full": 3540,
+    "window": 1522,
+    "compact": 1743
+  },
+  "window_saving": 0.5701,
+  "compact_saving": 0.5076,
+  "verdict_consistency": 1.0,
+  "note": "rule 轨判定不消费工作记忆，三策略结论一致是构造使然；token 差值为机制收益，质量影响需 llm 轨评测"
+}

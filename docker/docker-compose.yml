@@ -27,14 +27,7 @@ services:
       HF_HOME: /cache/hf
     volumes:
       - hfcache:/cache/hf
-    command: >
-      sh -c "cat backend/rag/schema.sql | psql $$SPECAGENT_DSN ||
-             (pip install --no-cache-dir psycopg && cat backend/rag/schema.sql | python -c \"
-             import sys, psycopg
-             conn = psycopg.connect('postgresql://specagent:specagent@pg:5432/specagent')
-             conn.autocommit = True
-             conn.cursor().execute(sys.stdin.read())\") &&
-             python -m rag.store corpus/SPGT21001-2025_机械制图与尺寸公差.md corpus/SPGT21002-2025_焊接质量验收规范.md corpus/SPGT21003-2025_电气设备标识与安全要求.md"
+    command: python docker/init_db.py
     depends_on:
       pg: { condition: service_healthy }
     restart: "no"

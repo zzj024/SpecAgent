@@ -1,8 +1,8 @@
 {
   "date": "2026-09-18",
   "mode": "rule",
-  "A_rate": 0.1,
-  "B_rate": 0.7,
+  "A_rate": 0.9,
+  "B_rate": 1.0,
   "C_rate": 1.0,
   "false_refusal_rate": 0.0,
   "n": {
@@ -21,7 +21,7 @@
     {
       "expect": "refusal_B",
       "text": "[术语] 解释公差等级的定义",
-      "verdict": "refusal_A"
+      "verdict": "refusal_B"
     },
     {
       "expect": "refusal_B",
@@ -31,7 +31,7 @@
     {
       "expect": "refusal_B",
       "text": "[术语] 咬边的定义是什么",
-      "verdict": "refusal_A"
+      "verdict": "refusal_B"
     },
     {
       "expect": "refusal_B",
@@ -56,7 +56,7 @@
     {
       "expect": "refusal_B",
       "text": "[术语] 基本尺寸的定义",
-      "verdict": "refusal_A"
+      "verdict": "refusal_B"
     },
     {
       "expect": "refusal_B",
@@ -64,5 +64,5 @@
       "verdict": "refusal_B"
     }
   ],
-  "elapsed_s": 328.0
+  "elapsed_s": 488.7
 }

@@ -16,10 +16,14 @@ class MemoryStore:
     def __init__(self, dsn: str):
         self.dsn = dsn
 
+    def _conn(self) -> psycopg.Connection:
+        """查询要按列名取值（search/count 返回 dict），统一 dict_row。"""
+        return psycopg.connect(self.dsn, row_factory=dict_row)
+
     def upsert(self, domain: str, attribute: str, pattern: str,
                clause_no: str = "") -> None:
         """沉淀一条经验；同三元组重复出现只涨计数。"""
-        with psycopg.connect(self.dsn) as conn, conn.cursor() as cur:
+        with self._conn() as conn, conn.cursor() as cur:
             cur.execute(
                 """INSERT INTO memory_entries (memory_id, domain, attribute, pattern, clause_no)
                    VALUES (%s, %s, %s, %s, %s)
@@ -32,7 +36,7 @@ class MemoryStore:
 
     def search(self, domain: str, attribute: str = "", limit: int = 3) -> list[dict]:
         """召回经验：同领域优先、同属性加权（属性完全一致的排前面）。"""
-        with psycopg.connect(self.dsn) as conn, conn.cursor() as cur:
+        with self._conn() as conn, conn.cursor() as cur:
             cur.execute(
                 """SELECT attribute, pattern, clause_no, hit_count
                      FROM memory_entries
@@ -44,11 +48,11 @@ class MemoryStore:
             return cur.fetchall()
 
     def count(self) -> int:
-        with psycopg.connect(self.dsn) as conn, conn.cursor() as cur:
+        with self._conn() as conn, conn.cursor() as cur:
             cur.execute("SELECT count(*) AS n FROM memory_entries")
             return cur.fetchone()["n"]
 
     def clear(self) -> None:
         """评测四消融用：清空经验库重建基线。"""
-        with psycopg.connect(self.dsn) as conn, conn.cursor() as cur:
+        with self._conn() as conn, conn.cursor() as cur:
             cur.execute("DELETE FROM memory_entries")

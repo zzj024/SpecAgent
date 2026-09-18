@@ -12,6 +12,7 @@ COPY backend/ backend/
 COPY corpus/ corpus/
 COPY web/ web/
 COPY mcp_server/ mcp_server/
+COPY docker/ docker/
 
 # torch CPU 版：服务端推理不需要 CUDA，CPU 轮子体积是 GPU 版的 1/6
 RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \

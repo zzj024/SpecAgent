@@ -1,0 +1,88 @@
+{
+  "date": "2026-09-18",
+  "n_rounds": 10,
+  "resume_success_rate": 1.0,
+  "rounds": [
+    {
+      "round": 0,
+      "crash_at": "router",
+      "exit137": true,
+      "no_dup": true,
+      "consistent": true,
+      "pass": true
+    },
+    {
+      "round": 1,
+      "crash_at": "retriever",
+      "exit137": true,
+      "no_dup": true,
+      "consistent": true,
+      "pass": true
+    },
+    {
+      "round": 2,
+      "crash_at": "reviewer",
+      "exit137": true,
+      "no_dup": true,
+      "consistent": true,
+      "pass": true
+    },
+    {
+      "round": 3,
+      "crash_at": "verifier",
+      "exit137": true,
+      "no_dup": true,
+      "consistent": true,
+      "pass": true
+    },
+    {
+      "round": 4,
+      "crash_at": "writer",
+      "exit137": true,
+      "no_dup": true,
+      "consistent": true,
+      "pass": true
+    },
+    {
+      "round": 5,
+      "crash_at": "router",
+      "exit137": true,
+      "no_dup": true,
+      "consistent": true,
+      "pass": true
+    },
+    {
+      "round": 6,
+      "crash_at": "retriever",
+      "exit137": true,
+      "no_dup": true,
+      "consistent": true,
+      "pass": true
+    },
+    {
+      "round": 7,
+      "crash_at": "reviewer",
+      "exit137": true,
+      "no_dup": true,
+      "consistent": true,
+      "pass": true
+    },
+    {
+      "round": 8,
+      "crash_at": "verifier",
+      "exit137": true,
+      "no_dup": true,
+      "consistent": true,
+      "pass": true
+    },
+    {
+      "round": 9,
+      "crash_at": "writer",
+      "exit137": true,
+      "no_dup": true,
+      "consistent": true,
+      "pass": true
+    }
+  ],
+  "baseline_items": 6
+}

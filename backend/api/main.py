@@ -15,6 +15,7 @@ SSE 实现：流水线在后台线程跑，on_event 回调把事件塞进线程�
 import json
 import queue
 import threading
+import uuid
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query
@@ -78,7 +79,11 @@ def search(
 @app.post("/reviews")
 def create_review(req: ReviewRequest) -> dict:
     try:
+        # API 层每次请求发新单号：重复审同一文档是合法的新审查；
+        # 幂等（同 id 续跑/免重跑）留给显式携带 review_id 的调用方（评测/恢复）
+        review_id = f"rev-{uuid.uuid4().hex[:12]}"
         return run_review(req.doc_text, document_name=req.filename,
+                          review_id=review_id,
                           mode=req.mode, use_memory=req.use_memory)
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=500,
@@ -97,6 +102,7 @@ def stream_review(req: ReviewRequest) -> StreamingResponse:
     def worker() -> None:
         try:
             report = run_review(req.doc_text, document_name=req.filename,
+                                review_id=f"rev-{uuid.uuid4().hex[:12]}",
                                 mode=req.mode, use_memory=req.use_memory,
                                 on_event=on_event)
             events.put(("report", report))
