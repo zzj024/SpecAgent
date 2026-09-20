@@ -11,7 +11,6 @@ dependencies = [
     "uvicorn[standard]>=0.30",
     # 结构化输出：报告 Schema / 证据三元组全靠 Pydantic 约束，全项目数据模型事实标准
     "pydantic>=2.8",
-    "pydantic-settings>=2.4",
     # PostgreSQL 驱动：psycopg3 是 PG 官方推荐的现代驱动，原生支持服务端游标与二进制协议
     "psycopg[binary]>=3.2",
     # pgvector 的 Python 类型适配（vector(1024) <-> numpy/list），配合 psycopg 使用

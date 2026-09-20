@@ -9,6 +9,7 @@
   证据一致性 = non_compliant 结论挂的条款号与治理条款库的命中率
 BadCase 落归因表（解析/检索/门控三类），供 docs/问题档案复盘。
 """
+import argparse
 import json
 import sys
 import time
@@ -47,6 +48,14 @@ def _purge(review_ids: list[str]) -> None:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser(description="评测二：埋错法审查准确率")
+    ap.add_argument("--mode", choices=["rule", "llm"], default="rule",
+                    help="rule=比较器轨（离线可复现）；llm=LLM 判定轨（需 API KEY）")
+    ap.add_argument("--limit", type=int, default=0,
+                    help="只跑前 N 份文档（0=全量；llm 轨建议先用子集探路）")
+    ap.add_argument("--tag", default="", help="审查单号与结果文件的后缀（隔离不同配置）")
+    args = ap.parse_args()
+
     ann = [json.loads(x) for x in
            (DOCS / "annotations.jsonl").read_text(encoding="utf-8").splitlines() if x]
     by_doc: dict[str, dict[int, dict]] = {}
@@ -54,7 +63,9 @@ def main() -> None:
         by_doc.setdefault(a["doc_id"], {})[a["seq"]] = a
 
     doc_ids = sorted(by_doc)
-    review_ids = [f"rev-eval2-{d}" for d in doc_ids]
+    if args.limit:
+        doc_ids = doc_ids[: args.limit]
+    review_ids = [f"rev-eval2{args.tag}-{d}" for d in doc_ids]
     _purge(review_ids)
 
     tp = fn = fp = tn = 0
@@ -65,7 +76,7 @@ def main() -> None:
     for doc_id, rid in zip(doc_ids, review_ids):
         text = (DOCS / f"{doc_id}.md").read_text(encoding="utf-8")
         report = run_review(text, document_name=f"{doc_id}.md", review_id=rid,
-                            mode="rule", use_memory=False)
+                            mode=args.mode, use_memory=False)
         findings = {f["item_seq"]: f for f in report.get("findings", [])}
         for seq, truth in by_doc[doc_id].items():
             f = findings.get(seq)
@@ -91,6 +102,7 @@ def main() -> None:
     n = tp + fn + tn + fp
     result = {
         "date": date.today().isoformat(), "n_docs": len(doc_ids), "n_items": n,
+        "mode": args.mode,
         "miss_rate": round(fn / (tp + fn), 4) if tp + fn else 0.0,
         "false_alarm_rate": round(fp / (fp + tn), 4) if fp + tn else 0.0,
         "recall": round(tp / (tp + fn), 4) if tp + fn else 0.0,
@@ -99,9 +111,9 @@ def main() -> None:
         "confusion": {"tp": tp, "fn": fn, "fp": fp, "tn": tn},
         "badcase_types": dict(Counter(b["type"] + ":" + b["attr"] for b in badcases)),
         "elapsed_min": round((time.perf_counter() - t0) / 60, 1),
-        "mode": "rule",
     }
-    out = HERE / "results" / f"review_results_{date.today().isoformat()}.json"
+    suffix = args.tag or ""
+    out = HERE / "results" / f"review_results{suffix}_{date.today().isoformat()}.json"
     out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({k: v for k, v in result.items() if k != "badcase_types"},
                      ensure_ascii=False, indent=2))

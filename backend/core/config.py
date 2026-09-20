@@ -10,6 +10,19 @@ LLM 约定（重要）：DEEPSEEK_API_KEY 未设置时系统整体进入**确定
   2) 拿到 KEY 即自动升级为 LLM 判定，代码路径不变。
 """
 import os
+from pathlib import Path
+
+# ---- .env 加载（零依赖，不用 python-dotenv）-----------------------------
+# .env 优先于继承的环境变量：.env 是开发者显式维护的本地配置（密钥换发只改
+# 这一个文件）；容器/CI 里没有 .env（gitignore + 不进镜像），注入的环境变量
+# 自然生效，两条路径不冲突。
+_ROOT = Path(__file__).resolve().parents[2]
+if (_ROOT / ".env").exists():
+    for _line in (_ROOT / ".env").read_text(encoding="utf-8").splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _k, _v = _line.split("=", 1)
+            os.environ[_k.strip()] = _v.strip()
 
 # 数据库
 DSN = os.getenv(

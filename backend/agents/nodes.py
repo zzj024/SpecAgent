@@ -146,8 +146,8 @@ _LLM_SYSTEM = (
 
 
 def _llm_judge(item: CheckItem, hits: list[dict], wm: WorkingMemory,
-               breaker: CircuitBreaker) -> Finding:
-    """llm 轨单项判定：候选条文 + 工作记忆进 prompt；熔断开闸 → degraded。"""
+               breaker: CircuitBreaker, hints: list[dict] | None = None) -> Finding:
+    """llm 轨单项判定：候选条文 + 工作记忆 + 经验提示进 prompt；熔断开闸 → degraded。"""
     llm = get_llm()
     if not breaker.allow():
         return Finding(item=item, verdict="degraded", confidence=0.0,
@@ -158,6 +158,8 @@ def _llm_judge(item: CheckItem, hits: list[dict], wm: WorkingMemory,
         for i, h in enumerate(hits))
     user = (f"检查项：{item.text}\n\n候选条文：\n{clauses}\n\n"
             + (f"此前审查记录（工作记忆）：\n{context}\n\n" if context else "")
+            + (f"历史经验提示（该类属性常见不符合模式，供参考，判定仍以条文为准）：\n"
+               f"{'；'.join(h['pattern'] for h in hints)}\n\n" if hints else "")
             + "输出 JSON。")
     try:
         out = llm.chat_json(_LLM_SYSTEM, user)
@@ -236,7 +238,7 @@ def reviewer_node(state: ReviewState) -> dict:
         hint_txt = "；".join(h["pattern"] for h in hints) or ""
 
         if mode == "llm":
-            f = _llm_judge(it, hits, wm, breaker)
+            f = _llm_judge(it, hits, wm, breaker, hints=hints)
         else:
             j = judge_item(it.text, hits)
             if j is None:

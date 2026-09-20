@@ -47,9 +47,10 @@
 
 | | rule 轨（默认） | llm 轨 |
 |---|---|---|
-| 触发 | 无需任何 API Key | 配置 `DEEPSEEK_API_KEY` 即自动启用 |
+| 触发 | 无需任何 API Key | `.env` 配任意 OpenAI 兼容端点即自动启用 |
 | 支持性判定 | 程序化数值/类别比较器（`agents/compare.py`） | LLM 结构化输出（JSON 强制） |
 | 证据门控 | 相同：条款存在 + 引用子串 + 交叉复核 | 相同 |
+| 已实测 | 全部评测数字的基准轨 | DeepSeek / 小米 MiMo（`mimo-v2.5-pro`）跑通端到端 |
 | 用途 | 单测 oracle / 评测回归基准 / 离线复现 | 生产判定 / 模糊语义场景 |
 
 ## 评测数字（全部脚本可复现，rule 轨、无 LLM API 依赖）
@@ -94,8 +95,9 @@ HF_HUB_OFFLINE=0 .venv/Scripts/python -m rag.store corpus/SPGT21001-2025_机械�
 # 打开 http://localhost:8000 —— 粘贴文档 → 实时看五 agent 流转 → 带证据链报告
 ```
 
-启用 LLM 判定轨（可选）：`set DEEPSEEK_API_KEY=sk-xxx` 后重启服务，
-`/reviews` 返回的 `mode` 字段从 `rule` 变为 `llm`。
+启用 LLM 判定轨（可选）：`cp .env.example .env` 并填入任意 OpenAI 兼容端点的
+KEY（DeepSeek / 小米 MiMo 等均已验证），重启服务后 `/reviews` 返回的 `mode`
+字段从 `rule` 变为 `llm`——证据门控与拒答纪律两条轨完全一致。
 
 MCP 接入（Claude Code / 任何 MCP 宿主）：
 

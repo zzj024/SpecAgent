@@ -31,9 +31,11 @@ def test_unknown_review_404():
 
 @pytest.mark.integration
 def test_review_endpoint_end_to_end():
-    """同步审查接口：完整跑 rule 轨，报告结构与 executor 直调一致。"""
+    """同步审查接口：完整跑 rule 轨，报告结构与 executor 直调一致。
+    mode 显式钉 rule——配了 .env KEY 的机器上，缺省会走 llm 轨打真 API。"""
     resp = client.post("/reviews", json={
-        "doc_text": "[接地] 电气柜保护接地电阻 5 Ω", "use_memory": False})
+        "doc_text": "[接地] 电气柜保护接地电阻 5 Ω", "use_memory": False,
+        "mode": "rule"})
     assert resp.status_code == 200
     body = resp.json()
     assert body["stats"]["total"] == 1
@@ -49,7 +51,8 @@ def test_review_endpoint_end_to_end():
 def test_sse_stream_events():
     """SSE 流：node 事件逐节点推送 + report 收尾。"""
     with client.stream("POST", "/reviews/stream", json={
-            "doc_text": "[接地] 电气柜保护接地电阻 5 Ω", "use_memory": False}) as resp:
+            "doc_text": "[接地] 电气柜保护接地电阻 5 Ω", "use_memory": False,
+            "mode": "rule"}) as resp:
         assert resp.status_code == 200
         assert resp.headers["content-type"].startswith("text/event-stream")
         seen_nodes, got_report = [], False
