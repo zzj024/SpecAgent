@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-20",
+  "retrieval": {
+    "recall@5": 1.0,
+    "mrr": 0.975
+  },
+  "review": {
+    "miss_rate": 0.0,
+    "false_alarm_rate": 0.0
+  },
+  "refusal": {
+    "A_rate": 1.0,
+    "B_rate": 1.0,
+    "C_rate": 1.0,
+    "false_refusal_rate": 0.0
+  },
+  "elapsed_min": 4.9
+}

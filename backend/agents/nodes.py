@@ -146,6 +146,30 @@ _LLM_SYSTEM = (
 )
 
 
+_GENERIC_TOKENS = {
+    "通道", "宽度", "要求", "采用", "表面", "设备", "系统", "深度", "长度",
+    "高度", "温度", "尺寸", "重量", "上限", "下限", "之间", "同一",
+}
+_NUMUNIT_RE = re.compile(r"[\d.]+\s*(mm|μm|℃|Ω|%|h|次|mm²|lx|m|kg)?")
+
+
+def _distinctive_tokens(text: str) -> set[str]:
+    """特征词：jieba 分词后 ≥2 字、剔数字/单位与跨领域通用词。
+    "消防通道宽度 1.2 m" → {消防}；"柜前维修通道宽度 700 mm" → {柜前, 维修}。"""
+    return {t for t in tokenize(text).split()
+            if len(t) >= 2 and t not in _GENERIC_TOKENS and not _NUMUNIT_RE.fullmatch(t)}
+
+
+def _domain_guard(item_text: str, quote: str) -> bool:
+    """快路领域守卫：比较器选中的治理句必须与检查项共享 ≥1 个特征词。
+
+    已知属性门禁挡不住"撞词"的域外项——"消防通道宽度 1.2 m"命中
+    aisle_width 属性，被拿电气柜通道下限 800 硬判 non_compliant
+    （评测三 A 级唯一残留）。特征词层面，"消防"与"电气柜前维修"
+    零重叠 → 推去慢路让精排分数与词面交集说话，宁拒答不硬判。"""
+    return bool(_distinctive_tokens(item_text) & _distinctive_tokens(quote))
+
+
 def _llm_judge(item: CheckItem, hits: list[dict], context: str,
                hints: list[dict], breaker: CircuitBreaker) -> Finding:
     """llm 慢路单项判定（可并发调用）：候选条文 + 工作记忆快照 + 经验提示。
@@ -239,12 +263,15 @@ def reviewer_node(state: ReviewState) -> dict:
         hint_txt = "；".join(h["pattern"] for h in hints) or ""
 
         # ---- 快路：比较器直接在 RRF 候选池上判（~1ms，免精排免 LLM）----
-        # 门禁：只对"检测出已知属性"的项开放——attr=None 时比较器的锚词
-        # 过滤形同虚设，通用数值判定会抓任何带"不得大于"的卡硬判
-        # （"防火涂料耐火极限"就这样被判成 non_compliant）。未知属性
-        # 一律慢路：精排分数 + 词面交集判 A/B，宁拒答不硬判。
+        # 双门禁：①已知属性（attr=None 时锚词过滤失效，通用数值判定会
+        # 抓任何带"不得大于"的卡硬判）；②领域守卫（域外项撞上已知属性词
+        # 时，治理句与检查项在特征词层面应有交集——"消防通道"撞
+        # aisle_width 就是被它拦下推慢路的）。过不了双门禁的项走慢路：
+        # 精排分数 + 词面交集判 A/B，宁拒答不硬判。
         attr_known = detect_attribute(it.text) is not None
         j = judge_item(it.text, hits) if (hits and attr_known) else None
+        if j is not None and not _domain_guard(it.text, j.quote):
+            j = None
         if j is not None and not force_slow:
             out.append(_finding_from_judgment(it, j, hits, hint_txt))
             wm.add(it.seq, f"{it.text}→{j.verdict}", j.verdict)
@@ -303,16 +330,16 @@ def reviewer_node(state: ReviewState) -> dict:
 
 
 def _weak_related(item_text: str, hits: list[dict]) -> bool:
-    """A/B 拒答的边界判据：top1 候选与检查项有无 ≥2 字词的词汇交集。
+    """A/B 拒答的边界判据：top1 候选与检查项有无**特征词**交集。
 
     分数低于拒答线时还要分两种死法：
-      词汇零交集（"防火涂料耐火极限" vs 粗糙度条文）→ A：真没覆盖；
-      词汇有交集（"公差等级的定义" vs 3.3 术语条款）→ B：擦边相关，
-      但证据不足以支撑结论。同一分数线，落在带内哪一侧靠词面定级。"""
+      特征词零交集（"消防通道宽度" vs 电气柜通道条款——消防 ∉ 条文）
+      → A：真没覆盖；有特征词交集（"公差等级的定义" vs 术语卡）→ B：
+      擦边相关但证据不足。与快路领域守卫（_domain_guard）共用同一套
+      特征词口径——"相不相关"全链路一个判据，不因路径不同而双标。"""
     if not hits:
         return False
-    toks = [t for t in tokenize(item_text).split() if len(t) >= 2]
-    return any(t in hits[0]["content"] for t in toks)
+    return bool(_distinctive_tokens(item_text) & _distinctive_tokens(hits[0]["content"]))
 
 
 def verifier_node(state: ReviewState) -> dict:

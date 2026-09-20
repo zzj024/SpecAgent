@@ -59,13 +59,20 @@ def _purge(rid: str) -> None:
         cur.execute("DELETE FROM reviews WHERE review_id = %s", (rid,))
 
 
-def bench(doc: str, rid: str, mode: str, strategy: str = "cascade") -> float:
-    _purge(rid)
-    t0 = time.perf_counter()
-    report = run_review(doc, document_name="latency.md", review_id=rid,
-                        mode=mode, strategy=strategy, use_memory=False)
-    dt = time.perf_counter() - t0
-    assert "error" not in report, report.get("error")
+def bench(doc: str, rid: str, mode: str, strategy: str = "cascade",
+          warm: bool = False) -> float:
+    """单组计时。warm=True 跑两遍取第二遍——第一遍付模型冷加载，
+    服务常驻进程的交互体验是热态口径（当前进程内模型已加载时，
+    第二遍≈稳态）。"""
+    runs = 2 if warm else 1
+    dt = 0.0
+    for _ in range(runs):
+        _purge(rid)
+        t0 = time.perf_counter()
+        report = run_review(doc, document_name="latency.md", review_id=rid,
+                            mode=mode, strategy=strategy, use_memory=False)
+        dt = time.perf_counter() - t0
+        assert "error" not in report, report.get("error")
     return round(dt, 1)
 
 
@@ -76,11 +83,15 @@ def main() -> None:
     llm_on = get_llm().available
 
     results = {}
-    results["rule_demo_6"] = bench(DEMO, "rev-lat-rule-demo", "rule")
-    results["rule_big"] = bench(big_doc(args.big), "rev-lat-rule-big", "rule")
+    results["rule_demo_6_cold"] = bench(DEMO, "rev-lat-rule-demo", "rule")
+    results["rule_big_warm"] = bench(big_doc(args.big), "rev-lat-rule-big", "rule",
+                                     warm=True)
+    results["rule_demo_6_warm"] = bench(DEMO, "rev-lat-rule-demo2", "rule", warm=True)
     if llm_on:
-        results["llm_cascade_demo_6"] = bench(DEMO, "rev-lat-llm-demo", "llm")
-        results["llm_cascade_big"] = bench(big_doc(args.big), "rev-lat-llm-big", "llm")
+        results["llm_cascade_demo_6_warm"] = bench(DEMO, "rev-lat-llm-demo", "llm",
+                                                   warm=True)
+        results["llm_cascade_big_warm"] = bench(big_doc(args.big), "rev-lat-llm-big",
+                                                "llm", warm=True)
         # llm-all 仅跑小文档做对照（大文档全慢路 = 数十分钟，量级已由评测二测得）
         results["llm_all_demo_6"] = bench(DEMO, "rev-lat-llm-all-demo", "llm",
                                           strategy="all")

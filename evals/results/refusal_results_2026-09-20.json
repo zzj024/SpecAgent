@@ -1,7 +1,7 @@
 {
   "date": "2026-09-20",
   "mode": "rule",
-  "A_rate": 0.9,
+  "A_rate": 1.0,
   "B_rate": 1.0,
   "C_rate": 1.0,
   "false_refusal_rate": 0.0,
@@ -64,5 +64,5 @@
       "verdict": "refusal_B"
     }
   ],
-  "elapsed_s": 472.0
+  "elapsed_s": 218.4
 }

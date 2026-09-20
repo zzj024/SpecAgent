@@ -5,7 +5,7 @@
 > 证据三元组，证据不足分级拒答而不是硬答**；全程轨迹落库可审计，进程被 kill 后
 > 从断点续跑；所有效果数字由评测脚本离线复现。
 
-[![tests](https://img.shields.io/badge/pytest-58%20passed-brightgreen)]()[![python](https://img.shields.io/badge/python-3.11-blue)]()
+[![tests](https://img.shields.io/badge/pytest-59%20passed-brightgreen)]()[![python](https://img.shields.io/badge/python-3.11-blue)]()
 [![license](https://img.shields.io/badge/license-MIT-green)]()
 
 ## 为什么做这个
@@ -68,20 +68,20 @@
 | 审查漏报率 / 误报率（rule 轨，30 份埋错文档 295 项） | **0% / 0%**（首轮 6.2%/8.2%，两个系统性 bug 修复后清零，归因见 `docs/问题与解决记录.md` P20/P21） | `evals/gen_docs.py && evals/run_review_eval.py` |
 | 审查漏报率 / 误报率（llm 级联轨，前 10 份 102 项，MiMo） | **0% / 0%**——级联不仅快，覆盖域内快路比较器比 LLM 更稳 | `run_review_eval.py --mode llm --limit 10` |
 | 证据条款命中（不符合结论引用的条款号正确率） | **1.00**（两轨一致） | 同上 |
-| 拒答：A 级 / B 级 / C 级正确率 | **90% / 100% / 100%**，不应拒误拒率 **0%** | `evals/run_refusal_eval.py` |
-| **交互延迟（级联架构）**：100 项批量文档 / 6 项演示文档 | llm 级联 **16.1s / 27.2s**（模板覆盖内 0 次 LLM 调用）；对照：全项走 LLM 慢路 6 项 **123.7s** | `evals/run_latency_eval.py` |
+| 拒答：A 级 / B 级 / C 级正确率 | **100% / 100% / 100%**，不应拒误拒率 **0%**（A/B 边界 = 特征词交集，与快路领域守卫同一口径） | `evals/run_refusal_eval.py` |
+| **交互延迟（稳态，级联架构）**：100 项批量 / 6 项演示 | llm 级联 **8.8s / 12.1s**（模板覆盖内 0 次 LLM 调用）；对照：全项走 LLM 慢路 6 项 38~124s | `evals/run_latency_eval.py` |
 | 记忆消融（10 文档 × 有/无经验库） | rule 轨两组判定一致（设计使然：记忆注入 rationale 不进判定）；经验库沉淀 14 条 | `evals/run_memory_eval.py` |
 | 工作记忆压缩（20 项长单累计 token） | 滑动窗口 **省 57%** / Compact **省 51%**，结论一致率 100% | `evals/run_compression_eval.py` |
 | kill -9 断点续跑成功率（5 节点轮转注入 10 次） | **100%**（无重复结论、与基线逐项一致） | `evals/run_checkpoint_eval.py` |
-| pytest | **58 passed**（43 快速单测 + 15 集成，含 kill 续跑端到端） | `pytest && pytest -m integration` |
+| **评测七·回归**：固定子集（检索 20 QA + 审查 5 文档 + 拒答 25 条） | 基线全绿，改动后 `run_regression.py` 5 分钟出对比，降幅 >2% 退出码 1 | `evals/run_regression.py` |
+| pytest | **59 passed**（44 快速单测 + 15 集成，含 kill 续跑端到端） | `pytest && pytest -m integration` |
 
 > **评测口径（诚实声明）**：埋错评测集由固定种子从规则比较器覆盖的属性模板生成，
 > 满分说明"rule 轨在其声明的覆盖范围内判定可靠 + 修复后无残留"，**不等于**任意
 > 文档满分——超出属性模板的真实文档由级联慢路（LLM）接手，LLM 边界判定的
 > 稳定性低于比较器（全项 LLM 对照组漏报 14.3%，其中含缓存混杂，见
-> `evals/results/review_results_llm_*.json`）。A 级 90% 的 1 例失败（消防通道）与
-> 修复史见 `evals/results/refusal_results_*.json` 与问题档案。延迟数字含模型冷加载，
-> 服务常驻进程下 6 项文档稳态更低。
+> `evals/results/review_results_llm_*.json`）。延迟为稳态口径（模型已加载），
+> 冷启动首次请求另付 ~10-20s 模型加载。
 
 > 埋错法评测集由固定种子生成（`evals/gen_docs.py`，seed=42）：
 > 30 份文档 × 8~12 检查项，埋 3~6 处已知违规，含 7 份完全合规纯样本。

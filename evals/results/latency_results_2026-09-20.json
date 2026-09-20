@@ -6,10 +6,11 @@
   },
   "llm": true,
   "elapsed_s": {
-    "rule_demo_6": 45.5,
-    "rule_big": 16.2,
-    "llm_cascade_demo_6": 27.2,
-    "llm_cascade_big": 16.1,
-    "llm_all_demo_6": 123.7
+    "rule_demo_6_cold": 20.7,
+    "rule_big_warm": 9.0,
+    "rule_demo_6_warm": 12.2,
+    "llm_cascade_demo_6_warm": 12.1,
+    "llm_cascade_big_warm": 8.8,
+    "llm_all_demo_6": 38.3
   }
 }

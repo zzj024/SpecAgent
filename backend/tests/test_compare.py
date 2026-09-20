@@ -142,3 +142,19 @@ def test_detect_attribute():
     assert detect_attribute("接地电阻 4 Ω") == "ground_res"
     assert detect_attribute("焊缝余高 3 mm") == "reinforcement"
     assert detect_attribute("与标准无关的一句话") is None
+
+
+def test_domain_guard_separates_out_of_domain():
+    """快路领域守卫：域外项（消防通道撞 aisle_width）拦下，域内项放行。"""
+    from agents.nodes import _domain_guard
+
+    aisle_quote = "电气柜前维修通道宽度不得小于 800 mm；柜后通道不得小于 600 mm。"
+    assert not _domain_guard("消防通道宽度 1.2 m", aisle_quote)      # 特征词：消防 ∉ 句
+    assert _domain_guard("柜前维修通道宽度 700 mm", aisle_quote)     # 柜前/维修 共享
+
+    ra_quote = "一般配合表面的 Ra 上限值为 1.6 μm；"
+    assert _domain_guard("阶梯轴配合表面粗糙度 Ra 3.2", ra_quote)    # 配合/Ra 共享
+    assert not _domain_guard("食品添加剂限量 1 g/kg", ra_quote)      # 零共享
+
+    # 数字/单位/通用词不算特征词
+    assert not _domain_guard("通道 1.2 m", aisle_quote)
