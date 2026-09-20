@@ -26,6 +26,7 @@ class ReviewState(TypedDict, total=False):
     doc_text: str
     doc_parse_confidence: float          # 文档级解析置信度（C 级拒答判据）
     mode: str                            # rule | llm
+    strategy: str                        # cascade（级联，默认）| all（llm 轨全项慢路，消融用）
     use_memory: bool                     # 评测四消融开关
     wm_strategy: str                     # full | window | compact（评测五）
 

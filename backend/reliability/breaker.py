@@ -8,6 +8,7 @@ LLM；上游故障时不熔断 = 每项都干等重试耗尽，整单卡死。�
 冷却期过 → HALF_OPEN（放一个试探请求，成功关闸，失败重新开闸）。
 Redis 计数器的进程内版（demo 单机足够；接口不变，换 Redis 只改实现）。
 """
+import threading
 import time
 from collections import deque
 
@@ -20,29 +21,36 @@ class CircuitBreaker:
         self.cooldown_s = cooldown_s
         self._events: deque[tuple[float, bool]] = deque()   # (ts, ok)
         self._opened_at: float | None = None
+        self._lock = threading.Lock()      # 慢路 LLM 并发调用共享一个熔断器
 
     def allow(self) -> bool:
         """是否放行。OPEN 且未过冷却 → False；过冷却 → True（半开试探）。"""
+        with self._lock:
+            return self._allow_locked()
+
+    def _allow_locked(self) -> bool:
         if self._opened_at is None:
             return True
         return (time.monotonic() - self._opened_at) >= self.cooldown_s
 
     def record(self, ok: bool) -> None:
-        now = time.monotonic()
-        self._events.append((now, ok))
-        while self._events and now - self._events[0][0] > self.window_s:
-            self._events.popleft()                          # 滑出窗口
-        if ok:
-            self._events.clear()                            # 成功打断连续失败计数
-            if self._opened_at is not None:
-                self._opened_at = None                      # 半开试探成功 → 关闸
-        else:
-            recent_fails = [e for e in self._events if not e[1]]
-            if len(recent_fails) >= self.fail_threshold:
-                self._opened_at = now                       # 连续失败达标 → 开闸
+        with self._lock:
+            now = time.monotonic()
+            self._events.append((now, ok))
+            while self._events and now - self._events[0][0] > self.window_s:
+                self._events.popleft()                      # 滑出窗口
+            if ok:
+                self._events.clear()                        # 成功打断连续失败计数
+                if self._opened_at is not None:
+                    self._opened_at = None                  # 半开试探成功 → 关闸
+            else:
+                recent_fails = [e for e in self._events if not e[1]]
+                if len(recent_fails) >= self.fail_threshold:
+                    self._opened_at = now                   # 连续失败达标 → 开闸
 
     @property
     def state(self) -> str:
-        if self._opened_at is None:
-            return "closed"
-        return "open" if not self.allow() else "half_open"
+        with self._lock:
+            if self._opened_at is None:
+                return "closed"
+            return "open" if not self._allow_locked() else "half_open"

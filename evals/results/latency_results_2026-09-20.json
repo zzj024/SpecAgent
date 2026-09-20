@@ -1,0 +1,15 @@
+{
+  "date": "2026-09-20",
+  "n_items": {
+    "demo": 6,
+    "big": 100
+  },
+  "llm": true,
+  "elapsed_s": {
+    "rule_demo_6": 45.5,
+    "rule_big": 16.2,
+    "llm_cascade_demo_6": 27.2,
+    "llm_cascade_big": 16.1,
+    "llm_all_demo_6": 123.7
+  }
+}

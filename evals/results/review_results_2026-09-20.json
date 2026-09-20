@@ -1,0 +1,20 @@
+{
+  "date": "2026-09-20",
+  "n_docs": 30,
+  "n_items": 295,
+  "mode": "rule",
+  "strategy": "n/a",
+  "miss_rate": 0.0,
+  "false_alarm_rate": 0.0,
+  "recall": 1.0,
+  "precision": 1.0,
+  "evidence_clause_hit": 1.0,
+  "confusion": {
+    "tp": 113,
+    "fn": 0,
+    "fp": 0,
+    "tn": 182
+  },
+  "badcase_types": {},
+  "elapsed_min": 1.4
+}

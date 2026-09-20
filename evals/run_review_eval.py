@@ -51,6 +51,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description="评测二：埋错法审查准确率")
     ap.add_argument("--mode", choices=["rule", "llm"], default="rule",
                     help="rule=比较器轨（离线可复现）；llm=LLM 判定轨（需 API KEY）")
+    ap.add_argument("--strategy", choices=["cascade", "all"], default="cascade",
+                    help="llm 轨策略：cascade=级联（快路+慢路）；all=全项慢路（延迟消融组）")
     ap.add_argument("--limit", type=int, default=0,
                     help="只跑前 N 份文档（0=全量；llm 轨建议先用子集探路）")
     ap.add_argument("--tag", default="", help="审查单号与结果文件的后缀（隔离不同配置）")
@@ -76,7 +78,8 @@ def main() -> None:
     for doc_id, rid in zip(doc_ids, review_ids):
         text = (DOCS / f"{doc_id}.md").read_text(encoding="utf-8")
         report = run_review(text, document_name=f"{doc_id}.md", review_id=rid,
-                            mode=args.mode, use_memory=False)
+                            mode=args.mode, strategy=args.strategy,
+                            use_memory=False)
         findings = {f["item_seq"]: f for f in report.get("findings", [])}
         for seq, truth in by_doc[doc_id].items():
             f = findings.get(seq)
@@ -102,7 +105,7 @@ def main() -> None:
     n = tp + fn + tn + fp
     result = {
         "date": date.today().isoformat(), "n_docs": len(doc_ids), "n_items": n,
-        "mode": args.mode,
+        "mode": args.mode, "strategy": args.strategy if args.mode == "llm" else "n/a",
         "miss_rate": round(fn / (tp + fn), 4) if tp + fn else 0.0,
         "false_alarm_rate": round(fp / (fp + tn), 4) if fp + tn else 0.0,
         "recall": round(tp / (tp + fn), 4) if tp + fn else 0.0,

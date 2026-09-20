@@ -54,3 +54,9 @@ REFUSE_C_CONF = float(os.getenv("SPECAGENT_REFUSE_C_CONF", "0.5"))
 # 可靠性
 BREAKER_FAIL_THRESHOLD = int(os.getenv("SPECAGENT_BREAKER_THRESHOLD", "3"))
 BREAKER_WINDOW_S = float(os.getenv("SPECAGENT_BREAKER_WINDOW_S", "60"))
+
+# 级联判定（2026-09-20，延迟优化的架构答案）：
+# 快路 rule 比较器 ~1ms；慢路 LLM 网络往返 ~10s —— 慢路调用并发度
+LLM_CONCURRENCY = int(os.getenv("SPECAGENT_LLM_CONCURRENCY", "8"))
+# LLM 响应缓存（sqlite，.cache/llm.db）：同 prompt 直接回放，评测重跑提速用
+LLM_CACHE = os.getenv("SPECAGENT_LLM_CACHE", "1") == "1"

@@ -108,6 +108,46 @@ def hybrid_search(
     return rrf_merge([vec, kw], k=k)
 
 
+def hybrid_search_batch(queries: list[str], k: int = 5, candidate_k: int = 20,
+                        model=None, dsn: str | None = None,
+                        encode_batch: int = 32) -> list[list[dict]]:
+    """批量版总装：N 个查询 → N 组候选（级联判定的检索层，2026-09-20）。
+
+    与逐个调 hybrid_search 的三点差异（都是 100 项文档的延迟地板）：
+      1. embedding 一次批量算（encode 有固定调度开销，逐条调用白付 N 次）；
+      2. 全程一条数据库连接（逐次 connect 的握手成本 ×N 完全可省）；
+      3. 只做 RRF 排序、不 rerank——rerank 属于慢路（级联快路不需要精排，
+         比较器自己在候选序列里找治理条款）。
+    """
+    import numpy as np
+
+    from core.config import DSN as _DEFAULT_DSN
+
+    model = model or load_model()
+    out: list[list[dict]] = []
+    with psycopg.connect(dsn or _DEFAULT_DSN) as conn:
+        register_vector(conn)
+        with conn.cursor() as cur:
+            for start in range(0, len(queries), encode_batch):
+                chunk = queries[start:start + encode_batch]
+                qvecs = np.asarray(embed_texts(model, chunk), dtype=np.float32)
+                for q, qv in zip(chunk, qvecs):
+                    vec = _vector_search_with_vec(cur, qv, candidate_k)
+                    kw = keyword_search(cur, q, candidate_k)
+                    out.append(rrf_merge([vec, kw], k=k))
+    return out
+
+
+def _vector_search_with_vec(cur, qv, k: int) -> list[dict]:
+    """向量通路（查询向量已算好）：与 vector_search 同构，免重复编码。"""
+    rows = cur.execute(
+        """SELECT chunk_id, clause_no, content
+           FROM chunks ORDER BY embedding <=> %s LIMIT %s""",
+        (qv, k),
+    ).fetchall()
+    return [dict(chunk_id=r[0], clause_no=r[1], content=r[2]) for r in rows]
+
+
 # ---- 第 4 段：rerank 接入（2026-09-17 用户走读确认后写入）----
 from sentence_transformers import CrossEncoder  # noqa: E402
 

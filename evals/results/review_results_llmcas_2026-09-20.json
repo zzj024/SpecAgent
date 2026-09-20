@@ -3,21 +3,18 @@
   "n_docs": 10,
   "n_items": 102,
   "mode": "llm",
-  "strategy": "all",
-  "miss_rate": 0.1429,
+  "strategy": "cascade",
+  "miss_rate": 0.0,
   "false_alarm_rate": 0.0,
-  "recall": 0.8571,
+  "recall": 1.0,
   "precision": 1.0,
   "evidence_clause_hit": 1.0,
   "confusion": {
-    "tp": 12,
-    "fn": 2,
+    "tp": 14,
+    "fn": 0,
     "fp": 0,
     "tn": 88
   },
-  "badcase_types": {
-    "漏报:live_h": 1,
-    "漏报:ra_raw": 1
-  },
-  "elapsed_min": 31.3
+  "badcase_types": {},
+  "elapsed_min": 0.6
 }

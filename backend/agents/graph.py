@@ -122,12 +122,16 @@ def run_review(
     document_name: str = "uploaded.md",
     review_id: str | None = None,
     mode: str | None = None,
+    strategy: str = "cascade",
     use_memory: bool = True,
     wm_strategy: str = "full",
     dsn: str = DSN,
     on_event: Callable[[str, list[dict]], None] | None = None,
 ) -> dict:
-    """全流程入口。返回 writer 产出的报告 dict（失败时返回 error 报告）。"""
+    """全流水线入口。返回 writer 产出的报告 dict（失败时返回 error 报告）。
+
+    strategy：cascade（默认）= 快路比较器 + 慢路 LLM 级联；
+              all = llm 轨全项走慢路（延迟对比评测的消融组）。"""
     items, doc_conf = parse_document(doc_text)
     document_id = document_id_for(document_name, doc_text)
     if mode is None:
@@ -154,6 +158,7 @@ def run_review(
         "document_name": document_name, "doc_text": doc_text,
         "doc_parse_confidence": doc_conf, "mode": mode,
         "use_memory": use_memory, "wm_strategy": wm_strategy,
+        "strategy": strategy,
         "items": items,
     }
     state = unpack_state(snapshot) if snapshot else dict(base)

@@ -20,18 +20,19 @@ llm 轨的判定仍要过 verifier 的程序化门控——LLM 说的条款号/�
 import math
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor
 
-from agents.compare import judge_item
+from agents.compare import ATTRIBUTES, detect_attribute, judge_item
 from agents.llm import LLMUnavailable, get_llm
 from agents.state import ReviewState
 from core.config import (
-    BREAKER_FAIL_THRESHOLD, BREAKER_WINDOW_S, DSN, REFUSE_A_SCORE,
-    REFUSE_C_CONF, RETRIEVAL_K, CANDIDATE_K, RERANK_ON,
+    BREAKER_FAIL_THRESHOLD, BREAKER_WINDOW_S, DSN, LLM_CONCURRENCY,
+    REFUSE_A_SCORE, REFUSE_C_CONF, RETRIEVAL_K, CANDIDATE_K,
 )
 from core.schemas import CheckItem, Evidence, Finding
 from memory.long_term import MemoryStore
 from memory.working import WorkingMemory
-from rag.retrieve import hybrid_search, load_model, rerank
+from rag.retrieve import hybrid_search_batch, load_model, rerank
 from rag.store import tokenize
 from reliability.breaker import CircuitBreaker
 from safety.evidence_gate import verify_evidence
@@ -102,38 +103,37 @@ def _expand_query(item: CheckItem) -> str:
     return f"{item.text} {' '.join(keys)}".strip()
 
 
-def retriever_node(state: ReviewState) -> dict:
-    """检索 Agent：逐项混合检索 + 重排，产候选条款（条款号+原文+分数）。
+def _rerank_scored(query: str, hits: list[dict], k: int = RETRIEVAL_K) -> list[dict]:
+    """rerank + sigmoid 归一（慢路专用；快路比较器不需要精排）。"""
+    rk = rerank(query, hits, k=k)
+    for h in rk:
+        h["score"] = round(_sigmoid(h.get("rerank", 0.0)), 4)
+    return rk
 
-    只检索不判定——检索质量的可归因性要求这一步的行为完全由
-    检索配置决定（评测一的三档），混进判定逻辑就没法单独归因了。
-    低置信兜底：top1 分低于 A 级拒答线时先别急着判死，锚词扩写重试
-    一轮（Query Rewrite），两轮取 top1 分高者——A 级拒答只留给
-    重写后仍不相关的项，把"词汇不重叠"和"真的没覆盖"区分开。"""
+
+def retriever_node(state: ReviewState) -> dict:
+    """检索 Agent：批量混合检索（RRF 序候选池，不 rerank）。
+
+    级联架构下的分工（2026-09-20）：本节点只产"够比较器用"的候选池——
+    一次批量 embedding + 单连接跑完全部查询（100 项的检索地板从 ~50s
+    压到秒级）；精排（rerank）挪到慢路——只有比较器判不动的项才值得
+    花 7~8s 的 CPU 精排，判得动的项 RRF 序已足够（比较器按锚词过滤后
+    逐卡试判，见 compare.judge_item）。
+
+    只检索不判定——检索质量的可归因性要求这一步的行为完全由检索配置
+    决定（评测一的三档），混进判定逻辑就没法单独归因了。"""
     if state.get("findings") and state["findings"][0].verdict == "refusal_C":
         return {"candidates": []}                    # C 级单已整单拒答，免检索
 
-    model = _get_model()
-    per_item = []
-    for it in state.get("items", []):
-        hits = _search_one(f"{it.tag} {it.text}".strip(), model)
-        if not hits or hits[0]["score"] < REFUSE_A_SCORE:      # 低置信 → 重写兜底
-            rewritten = _search_one(_expand_query(it), model)
-            if rewritten and (not hits or rewritten[0]["score"] > hits[0]["score"]):
-                hits = rewritten
-        per_item.append({"seq": it.seq, "hits": hits})
-
+    items = state.get("items", [])
+    if not items:
+        return {"candidates": []}
+    queries = [f"{it.tag} {it.text}".strip() for it in items]
+    pools = hybrid_search_batch(queries, k=CANDIDATE_K, model=_get_model())
+    per_item = [{"seq": it.seq, "hits": hits} for it, hits in zip(items, pools)]
     return {"candidates": per_item,
-            "events": [{"node": "retriever", "detail": f"{len(per_item)} 项检索完成"}]}
-
-
-def _search_one(query: str, model) -> list[dict]:
-    hits = hybrid_search(query, k=CANDIDATE_K, model=model)
-    if RERANK_ON:
-        hits = rerank(query, hits, k=RETRIEVAL_K)
-        for h in hits:                               # rerank 原始 logit → 0~1
-            h["score"] = round(_sigmoid(h.get("rerank", 0.0)), 4)
-    return hits
+            "events": [{"node": "retriever",
+                        "detail": f"{len(per_item)} 项批量检索完成（RRF 池）"}]}
 
 
 _LLM_SYSTEM = (
@@ -146,14 +146,16 @@ _LLM_SYSTEM = (
 )
 
 
-def _llm_judge(item: CheckItem, hits: list[dict], wm: WorkingMemory,
-               breaker: CircuitBreaker, hints: list[dict] | None = None) -> Finding:
-    """llm 轨单项判定：候选条文 + 工作记忆 + 经验提示进 prompt；熔断开闸 → degraded。"""
+def _llm_judge(item: CheckItem, hits: list[dict], context: str,
+               hints: list[dict], breaker: CircuitBreaker) -> Finding:
+    """llm 慢路单项判定（可并发调用）：候选条文 + 工作记忆快照 + 经验提示。
+
+    context 是调用前串行抓取的快照——并发阶段只做网络往返，不碰共享的
+    WorkingMemory（读序确定性：prompt 内容与串行版完全一致）。"""
     llm = get_llm()
     if not breaker.allow():
         return Finding(item=item, verdict="degraded", confidence=0.0,
                        rationale="LLM 服务熔断中，该检查项标记服务降级，请稍后重审。")
-    context = wm.context()
     clauses = "\n".join(
         f"[{i+1}] {h['clause_no']}（{h['chunk_id'].split(':')[0]}）：{h['content']}"
         for i, h in enumerate(hits))
@@ -190,6 +192,116 @@ def _llm_judge(item: CheckItem, hits: list[dict], wm: WorkingMemory,
     )
 
 
+def _finding_from_judgment(it: CheckItem, j, hits: list[dict], hint_txt: str) -> Finding:
+    """快路产物：比较器 Judgment → Finding（证据三元组在此挂上）。"""
+    chunk_id = next((h["chunk_id"] for h in hits if h["clause_no"] == j.clause_no),
+                    hits[0]["chunk_id"] if hits else "")
+    return Finding(
+        item=it, verdict=j.verdict, confidence=j.confidence,
+        evidence=Evidence(chunk_id=chunk_id, standard_id=chunk_id.split(":")[0],
+                          clause_no=j.clause_no, quote=j.quote, score=j.evidence_score),
+        rationale=j.rationale + (f"（经验提示：{hint_txt}）" if hint_txt else ""),
+    )
+
+
+def reviewer_node(state: ReviewState) -> dict:
+    """审查 Agent：级联判定——快路 rule 比较器，慢路 rerank+阈值+LLM。
+
+    为什么级联（2026-09-20 延迟优化的架构答案，不是调参）：
+      全项问 LLM = 法院所有案子都走合议庭。比较器判"接地电阻 5 Ω"只要
+      1ms，LLM 要一次 10s 网络往返——快路判得动的不该进慢路。
+      拒答语义也随之更干净：A/B 只在慢路上判（判不动才需要问
+      "是没覆盖还是依据不足"），C 级在检索前（router）。
+
+    慢路三阶段：循环里串行做"精排→阈值→A/B 定级→抓工作记忆快照"，
+    然后 ThreadPoolExecutor 并发调 LLM（LLM_CONCURRENCY 路），最后串行
+    收尾写工作记忆——并发只覆盖网络往返，共享状态全在串行段碰。"""
+    findings = state.get("findings", [])
+    if findings and findings[0].verdict == "refusal_C":
+        return {"verified": findings}                 # 透传给 writer
+
+    mode = state.get("mode", "rule")
+    strategy = state.get("strategy", "cascade")       # cascade | all（llm 轨消融用）
+    force_slow = mode == "llm" and strategy == "all"
+    by_seq = {c["seq"]: c["hits"] for c in state.get("candidates", [])}
+    mem = MemoryStore(DSN)
+    use_memory = state.get("use_memory", True)
+    domain = state.get("domain", "general")
+    wm = WorkingMemory(strategy=state.get("wm_strategy", "full"))
+    breaker = CircuitBreaker(BREAKER_FAIL_THRESHOLD, BREAKER_WINDOW_S)
+    out: list[Finding] = []
+    slow: list[tuple] = []                            # (item, 精排候选, hints, 记忆快照)
+    n_fast = 0
+
+    for it in state.get("items", []):
+        hits = by_seq.get(it.seq, [])
+        hints = mem.search(domain, it.attribute, limit=2) if use_memory else []
+        hint_txt = "；".join(h["pattern"] for h in hints) or ""
+
+        # ---- 快路：比较器直接在 RRF 候选池上判（~1ms，免精排免 LLM）----
+        # 门禁：只对"检测出已知属性"的项开放——attr=None 时比较器的锚词
+        # 过滤形同虚设，通用数值判定会抓任何带"不得大于"的卡硬判
+        # （"防火涂料耐火极限"就这样被判成 non_compliant）。未知属性
+        # 一律慢路：精排分数 + 词面交集判 A/B，宁拒答不硬判。
+        attr_known = detect_attribute(it.text) is not None
+        j = judge_item(it.text, hits) if (hits and attr_known) else None
+        if j is not None and not force_slow:
+            out.append(_finding_from_judgment(it, j, hits, hint_txt))
+            wm.add(it.seq, f"{it.text}→{j.verdict}", j.verdict)
+            n_fast += 1
+            continue
+
+        if not hits:
+            out.append(Finding(item=it, verdict="refusal_A", confidence=1.0,
+                               rationale="检索无任何候选，标准库未覆盖该项。"))
+            wm.add(it.seq, f"{it.text}→refusal_A", "refusal_A")
+            continue
+
+        # ---- 慢路准备：精排（含 Query Rewrite 兜底）→ 阈值 → A/B 定级 ----
+        base_q = f"{it.tag} {it.text}".strip()
+        rk = _rerank_scored(base_q, hits)
+        if (not rk or rk[0]["score"] < REFUSE_A_SCORE) and _expand_query(it) != base_q:
+            # 重写真的加了锚词才值得重排一次——attr=None 时扩写=原查询，
+            # 重跑 7s 的 CPU 精排是纯浪费
+            rk2 = _rerank_scored(_expand_query(it), hits)
+            if rk2 and (not rk or rk2[0]["score"] > rk[0]["score"]):
+                rk = rk2
+        top = rk[0]["score"] if rk else 0.0
+        if not rk or top < REFUSE_A_SCORE:
+            related = _weak_related(it.text, rk)
+            verdict = "refusal_B" if related else "refusal_A"
+            out.append(Finding(
+                item=it, verdict=verdict, confidence=1.0 - top,
+                rationale=(f"检索 top 相关分 {top}（阈值 {REFUSE_A_SCORE}），"
+                           + ("有擦边相关条文但证据不足以判定。" if related
+                              else "标准库未覆盖该项。")),
+            ))
+            wm.add(it.seq, f"{it.text}→{verdict}", verdict)
+            continue
+
+        if mode == "llm":
+            slow.append((it, rk, hints, wm.context()))    # 此刻的记忆快照进 prompt
+        else:                                             # rule 轨：相关但抽不出约束
+            out.append(Finding(item=it, verdict="refusal_B", confidence=0.5,
+                               rationale="检索到相关条文，但未抽出可核对的数值/类别约束，依据不足。"))
+            wm.add(it.seq, f"{it.text}→refusal_B", "refusal_B")
+
+    # ---- 慢路执行：并发只包网络往返，收尾串行 ----
+    if slow:
+        with ThreadPoolExecutor(max_workers=LLM_CONCURRENCY) as ex:
+            futures = [ex.submit(_llm_judge, it, rk, ctx, hints, breaker)
+                       for it, rk, hints, ctx in slow]
+            llm_results = [f.result() for f in futures]
+        for (it, _rk, _hints, _ctx), f in zip(slow, llm_results):
+            out.append(f)
+            wm.add(it.seq, f"{it.text}→{f.verdict}", f.verdict)
+
+    out.sort(key=lambda f: f.item.seq)
+    return {"findings": out, "wm_token_est": wm.token_est,
+            "events": [{"node": "reviewer",
+                        "detail": f"级联：快路 {n_fast} / 慢路 {len(slow)}；{_summarize(out)}"}]}
+
+
 def _weak_related(item_text: str, hits: list[dict]) -> bool:
     """A/B 拒答的边界判据：top1 候选与检查项有无 ≥2 字词的词汇交集。
 
@@ -201,71 +313,6 @@ def _weak_related(item_text: str, hits: list[dict]) -> bool:
         return False
     toks = [t for t in tokenize(item_text).split() if len(t) >= 2]
     return any(t in hits[0]["content"] for t in toks)
-
-
-def reviewer_node(state: ReviewState) -> dict:
-    """审查 Agent：Plan-and-Execute——逐项执行"检索结果→判定"计划。
-
-    判定顺序（短路求值，每项只落一种 verdict）：
-      C 级（已在 router 整单处理）→ A 级（相关度悬崖）→ rule/llm 判定。
-    长期记忆在此注入：同领域同属性的历史不符合模式作为提示附给判定器
-    （rule 轨记入 rationale，llm 轨进 prompt——经验影响判断，不影响证据）。"""
-    findings = state.get("findings", [])
-    if findings and findings[0].verdict == "refusal_C":
-        return {"verified": findings}                 # 透传给 writer
-
-    mode = state.get("mode", "rule")
-    by_seq = {c["seq"]: c["hits"] for c in state.get("candidates", [])}
-    mem = MemoryStore(DSN)
-    use_memory = state.get("use_memory", True)
-    domain = state.get("domain", "general")
-    wm = WorkingMemory(strategy=state.get("wm_strategy", "full"))
-    breaker = CircuitBreaker(BREAKER_FAIL_THRESHOLD, BREAKER_WINDOW_S)
-    out: list[Finding] = []
-
-    for it in state.get("items", []):
-        hits = by_seq.get(it.seq, [])
-        # ---- A/B 级拒答：top 候选低于拒答线后按词面交集定级（见 _weak_related）----
-        top = hits[0]["score"] if hits else 0.0
-        if not hits or top < REFUSE_A_SCORE:
-            related = _weak_related(it.text, hits)
-            out.append(Finding(
-                item=it, verdict="refusal_B" if related else "refusal_A",
-                confidence=1.0 - top,
-                rationale=(f"检索 top 相关分 {top}（阈值 {REFUSE_A_SCORE}），"
-                           + ("有擦边相关条文但证据不足以判定。" if related
-                              else "标准库未覆盖该项。")),
-            ))
-            wm.add(it.seq, f"{it.text}→{out[-1].verdict}", out[-1].verdict)
-            continue
-
-        hints = mem.search(domain, it.attribute, limit=2) if use_memory else []
-        hint_txt = "；".join(h["pattern"] for h in hints) or ""
-
-        if mode == "llm":
-            f = _llm_judge(it, hits, wm, breaker, hints=hints)
-        else:
-            j = judge_item(it.text, hits)
-            if j is None:
-                f = Finding(item=it, verdict="refusal_B", confidence=0.5,
-                            rationale="检索到相关条文，但未抽出可核对的数值/类别约束，依据不足。")
-            else:
-                f = Finding(
-                    item=it, verdict=j.verdict, confidence=j.confidence,
-                    evidence=Evidence(
-                        chunk_id=next((h["chunk_id"] for h in hits
-                                       if h["clause_no"] == j.clause_no), hits[0]["chunk_id"]),
-                        standard_id=next((h["chunk_id"] for h in hits
-                                          if h["clause_no"] == j.clause_no),
-                                         hits[0]["chunk_id"]).split(":")[0],
-                        clause_no=j.clause_no, quote=j.quote, score=j.evidence_score),
-                    rationale=j.rationale + (f"（经验提示：{hint_txt}）" if hint_txt else ""),
-                )
-                wm.add(it.seq, f"{it.text}→{j.verdict}", j.verdict)
-        out.append(f)
-
-    return {"findings": out, "wm_token_est": wm.token_est,
-            "events": [{"node": "reviewer", "detail": _summarize(out)}]}
 
 
 def verifier_node(state: ReviewState) -> dict:
