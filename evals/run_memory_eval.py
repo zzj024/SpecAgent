@@ -36,7 +36,7 @@ def _purge(rid: str) -> None:
         cur.execute("DELETE FROM reviews WHERE review_id = %s", (rid,))
 
 
-def run_group(tag: str, use_memory: bool, ann: dict) -> dict:
+def run_group(tag: str, use_memory: bool, ann: dict, mode: str = "rule") -> dict:
     miss = nc_pred = tp = fn = 0
     t0 = time.perf_counter()
     for d in range(N):
@@ -45,7 +45,7 @@ def run_group(tag: str, use_memory: bool, ann: dict) -> dict:
         _purge(rid)
         text = (DOCS / f"{doc_id}.md").read_text(encoding="utf-8")
         report = run_review(text, document_name=f"{doc_id}.md", review_id=rid,
-                            mode="rule", use_memory=use_memory)
+                            mode=mode, use_memory=use_memory)
         findings = {f["item_seq"]: f["verdict"] for f in report.get("findings", [])}
         for seq, violated in ann[doc_id].items():
             pred_nc = findings.get(seq) == "non_compliant"

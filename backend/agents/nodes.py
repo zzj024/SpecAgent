@@ -18,6 +18,7 @@ llm 轨的判定仍要过 verifier 的程序化门控——LLM 说的条款号/�
 在库里真实存在，这条纪律两条轨一视同仁。
 """
 import math
+import re
 import time
 
 from agents.compare import judge_item
@@ -170,10 +171,14 @@ def _llm_judge(item: CheckItem, hits: list[dict], wm: WorkingMemory,
                        rationale=f"LLM 调用失败（{e}），标记服务降级。")
 
     verdict = out.get("verdict", "insufficient")
-    hit = next((h for h in hits if h["clause_no"] == out.get("clause_no")), hits[0] if hits else None)
+    # 条款号归一化：LLM 会夹带空白/§/句读（肉眼不可见，SQL 等值匹配会挂），
+    # 不清洗的话证据门控 gate1 把正确结论误杀成 refusal_B（评测二 llm 轨
+    # 2 处漏报的根因——判对了，死在格式上）
+    clause_no = re.sub(r"[\s§。；;，,]", "", str(out.get("clause_no", "")))
+    hit = next((h for h in hits if h["clause_no"] == clause_no), hits[0] if hits else None)
     ev = Evidence(chunk_id=hit["chunk_id"] if hit else "",
                   standard_id=hit["chunk_id"].split(":")[0] if hit else "",
-                  clause_no=out.get("clause_no", ""),
+                  clause_no=clause_no,
                   quote=out.get("quote", ""),
                   score=hit.get("score", 0.0) if hit else 0.0)
     return Finding(
